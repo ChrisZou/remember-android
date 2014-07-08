@@ -29,23 +29,18 @@ public class PlaceholderFragment extends Fragment{
 	public PlaceholderFragment() {
 	}
 
-//    @ViewById(R.id.main_webview)
+    @ViewById(R.id.main_webview)
     WebView mWebView;
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        mWebView = (WebView) rootView.findViewById(R.id.main_webview);
-        mWebView.setWebViewClient(new WebViewClient());
-        mWebView.loadUrl(TWEETS_LIST_URL);
-//        mWebView.loadUrl("http://www.baidu.com");
 		return rootView;
 	}
     
-//	@AfterViews
-//	void initViews() {
-//        L.l("load url");
-//		mWebView.loadUrl("http://www.baidu.com");
-////        mWebView.loadUrl(TWEETS_LIST_URL);
-//	}
+	@AfterViews
+	void initViews() {
+        mWebView.setWebViewClient(new WebViewClient());
+        mWebView.loadUrl(TWEETS_LIST_URL);
+	}
 }
