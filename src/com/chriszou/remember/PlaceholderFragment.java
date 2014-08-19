@@ -6,9 +6,12 @@
 package com.chriszou.remember;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 import org.json.JSONArray;
@@ -16,12 +19,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -29,6 +33,7 @@ import com.chriszou.androidlibs.BaseViewBinderAdapter;
 import com.chriszou.androidlibs.BaseViewBinderAdapter.ViewBinder;
 import com.chriszou.androidlibs.L;
 import com.chriszou.androidlibs.UrlContentLoader;
+import com.chriszou.remember.model.TweetModel;
 
 /**
  * @author zouyong
@@ -36,14 +41,16 @@ import com.chriszou.androidlibs.UrlContentLoader;
  */
 @EFragment
 public class PlaceholderFragment extends Fragment implements UrlContentLoader.CallBack{
-	private static final String TWEETS_LIST_URL = "http://112.124.121.155:3000/tweets";
 	public PlaceholderFragment() {
 	}
 
-    @ViewById(R.id.main_webview)
-    WebView mWebView;
     @ViewById(R.id.main_listview)
     ListView mListView;
+    
+    @ViewById(R.id.main_btn_add)
+    Button mAddBtn;
+    @ViewById(R.id.main_add_edit)
+    EditText mAddEdit;
     
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,15 +61,32 @@ public class PlaceholderFragment extends Fragment implements UrlContentLoader.Ca
     
 	@AfterViews
 	void initViews() {
-        mWebView.setWebViewClient(new WebViewClient());
-        mWebView.loadUrl(TWEETS_LIST_URL);
-        
         loadTweets();
 	}
     
+    @Click(R.id.main_btn_add)
+    void onAddClicked() {
+        String text = mAddEdit.getText().toString().trim();
+        if(text.length()==0) {
+        	return;
+        }
+        
+        addTweet(text);
+    }
+    
+    @Click(R.id.main_shuffer)
+    void onShuffer() {
+    	Intent intetn = new Intent(getActivity(), ShufferActivity_.class);
+    	startActivity(intetn);
+    }
+    
+    
+    private void addTweet(String text) {
+    	new TweetModel().addTweet(text);
+    }
+   
 	private void loadTweets(){
-        final String SERVER_URL = "http://112.124.121.155:3000/tweets.json";
-		new UrlContentLoader(SERVER_URL).execute(this);
+        new TweetModel().loadTweets(this);
 	}
 
 	/* (non-Javadoc)
@@ -72,7 +96,8 @@ public class PlaceholderFragment extends Fragment implements UrlContentLoader.Ca
 	public void onSucceed(String content) {
        try {
 			JSONArray array = new JSONArray(content);
-            BaseViewBinderAdapter<JSONObject> adapter = new BaseViewBinderAdapter<JSONObject>(getActivity(), toJsonObjList(array), R.layout.tweet_item, new ViewBinder<JSONObject>() {
+            List<JSONObject> tweetArray = toJsonObjList(array);
+            BaseViewBinderAdapter<JSONObject> adapter = new BaseViewBinderAdapter<JSONObject>(getActivity(), tweetArray, R.layout.tweet_item, new ViewBinder<JSONObject>() {
 				@Override
 				public void bindView(View view, JSONObject item, ViewGroup parent) {
 					((TextView)view).setText(item.optString("content"));
