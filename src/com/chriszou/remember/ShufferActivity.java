@@ -5,8 +5,10 @@
  */
 package com.chriszou.remember;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -36,6 +38,10 @@ import com.chriszou.remember.model.TweetModel;
 @EActivity(R.layout.shuffer_activity)
 public class ShufferActivity extends Activity implements CallBack{
     
+    public static final String EXTRA_STRING_REMINDER_TYPE = "extra_string_reminder_type";
+    public static enum ReminderType{
+    	SHUFFLE, TODAY;
+    }
 	@ViewById(R.id.shuffer_listview)
 	ListView mListView;
     
@@ -51,9 +57,7 @@ public class ShufferActivity extends Activity implements CallBack{
 	public void onSucceed(String content) {
 		try {
 			JSONArray array = new JSONArray(content);
-			List<JSONObject> tweetArray = toJsonObjList(array);
-            long seed = System.nanoTime();
-            Collections.shuffle(tweetArray,new Random(seed));
+			List<JSONObject> tweetArray = getShowList(toJsonObjList(array));
             BaseViewBinderAdapter<JSONObject> adapter = new BaseViewBinderAdapter<JSONObject>(this, tweetArray, R.layout.tweet_item, new ViewBinder<JSONObject>() {
 				@Override
 				public void bindView(View view, JSONObject item, ViewGroup parent) {
@@ -64,6 +68,37 @@ public class ShufferActivity extends Activity implements CallBack{
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+	}
+    
+	/**
+	 * According to the reminder type, get the sublist to show in the UI
+	 * @return 
+	 */
+	private List<JSONObject> getShowList(List<JSONObject> items) {
+		ReminderType type = ReminderType.valueOf(getIntent().getStringExtra(EXTRA_STRING_REMINDER_TYPE));
+        List<JSONObject>result = null; 
+		switch (type){
+		case SHUFFLE:
+            result = items;
+            Collections.shuffle(result,new Random(System.nanoTime()));
+            break;
+		case TODAY:
+            result = new ArrayList<JSONObject>();
+            String todayString = getTodayString();
+			for(JSONObject item: items){
+				String createdTime = item.optString("created_at");
+                if(createdTime.startsWith(todayString)) {
+                	result.add(item);
+                }
+			}
+		}
+        
+		return result;
+	}
+    
+	private String getTodayString() {
+		SimpleDateFormat sdfDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        return sdfDateFormat.format(new Date());
 	}
 
 	/* (non-Javadoc)
