@@ -29,7 +29,7 @@ import com.chriszou.androidlibs.UrlContentLoader.CallBack;
  * 
  */
 public class TweetModel {
-    final String SERVER_IP = "10.197.36.157";
+    final String SERVER_IP = "112.124.121.155";
 	final String LISTING_URL_JSON = "http://"+SERVER_IP+":3000/tweets.json";
 	final String INDEX_URL = "http://"+SERVER_IP+":3000/tweets";
     final String TWEET_CREATING_URL = "http://"+SERVER_IP+":3000/tweet/create";

@@ -6,9 +6,7 @@
 package com.chriszou.remember;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -19,7 +17,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Fragment;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,8 +50,7 @@ public class PlaceholderFragment extends Fragment implements UrlContentLoader.Ca
     EditText mAddEdit;
     
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 		return rootView;
 	}
@@ -73,13 +69,6 @@ public class PlaceholderFragment extends Fragment implements UrlContentLoader.Ca
         
         addTweet(text);
     }
-    
-    @Click(R.id.main_shuffer)
-    void onShuffer() {
-    	Intent intetn = new Intent(getActivity(), ShufferActivity_.class);
-    	startActivity(intetn);
-    }
-    
     
     private void addTweet(String text) {
     	new TweetModel().addTweet(text);
