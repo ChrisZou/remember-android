@@ -19,7 +19,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -60,8 +62,11 @@ public class ShufferActivity extends Activity implements CallBack{
 			List<JSONObject> tweetArray = getShowList(toJsonObjList(array));
             BaseViewBinderAdapter<JSONObject> adapter = new BaseViewBinderAdapter<JSONObject>(this, tweetArray, R.layout.tweet_item, new ViewBinder<JSONObject>() {
 				@Override
-				public void bindView(View view, JSONObject item, ViewGroup parent) {
-					((TextView)view).setText(item.optString("content"));
+				public void bindView(int position, View view, JSONObject item, ViewGroup parent) {
+					TextView textView= (TextView)view;
+					textView.setText(item.optString("content"));
+                    int bgColor = position<5 ? Color.parseColor("#D6E1A4") : Color.TRANSPARENT;
+                    textView.setBackgroundColor(bgColor);
 				}
 			}) ;
             mListView.setAdapter(adapter);
@@ -75,7 +80,8 @@ public class ShufferActivity extends Activity implements CallBack{
 	 * @return 
 	 */
 	private List<JSONObject> getShowList(List<JSONObject> items) {
-		ReminderType type = ReminderType.valueOf(getIntent().getStringExtra(EXTRA_STRING_REMINDER_TYPE));
+        String typeString = getIntent().getExtras().getString(EXTRA_STRING_REMINDER_TYPE, ReminderType.SHUFFLE.name());
+		ReminderType type = ReminderType.valueOf(typeString);
         List<JSONObject>result = null; 
 		switch (type){
 		case SHUFFLE:
@@ -96,6 +102,7 @@ public class ShufferActivity extends Activity implements CallBack{
 		return result;
 	}
     
+	@SuppressLint("SimpleDateFormat")
 	private String getTodayString() {
 		SimpleDateFormat sdfDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return sdfDateFormat.format(new Date());

@@ -88,7 +88,7 @@ public class PlaceholderFragment extends Fragment implements UrlContentLoader.Ca
             List<JSONObject> tweetArray = toJsonObjList(array);
             BaseViewBinderAdapter<JSONObject> adapter = new BaseViewBinderAdapter<JSONObject>(getActivity(), tweetArray, R.layout.tweet_item, new ViewBinder<JSONObject>() {
 				@Override
-				public void bindView(View view, JSONObject item, ViewGroup parent) {
+				public void bindView(int position, View view, JSONObject item, ViewGroup parent) {
 					((TextView)view).setText(item.optString("content"));
 				}
 			}) ;

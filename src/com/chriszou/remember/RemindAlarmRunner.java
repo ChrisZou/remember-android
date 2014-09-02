@@ -24,7 +24,10 @@ public class RemindAlarmRunner implements AlarmRunner{
         Intent activityIntent = new Intent(context, ShufferActivity_.class);
         String reminderType = intent.getStringExtra(ShufferActivity_.EXTRA_STRING_REMINDER_TYPE);
         activityIntent.putExtra(ShufferActivity_.EXTRA_STRING_REMINDER_TYPE, reminderType);
+        activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		context.startActivity(activityIntent);
+        
+		Utils.setupAlarms(context);
 	}
 
 }

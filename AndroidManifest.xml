@@ -6,7 +6,7 @@
 
     <uses-sdk
         android:minSdkVersion="14"
-        android:targetSdkVersion="19" />
+        android:targetSdkVersion="17" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -29,6 +29,8 @@
         <activity android:name="com.chriszou.remember.ShufferActivity_" 
             android:screenOrientation="portrait"
             />
+        <receiver android:name="com.chriszou.remember.BootReceiver"/>
+        <receiver android:name="com.chriszou.androidlibs.AlarmReceiver"/>
     </application>
 
 </manifest>
