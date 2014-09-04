@@ -20,6 +20,10 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.CoreProtocolPNames;
 
+import android.app.Activity;
+import android.content.Context;
+import android.preference.PreferenceManager;
+
 import com.chriszou.androidlibs.L;
 import com.chriszou.androidlibs.UrlContentLoader;
 import com.chriszou.androidlibs.UrlContentLoader.CallBack;
@@ -33,6 +37,8 @@ public class TweetModel {
 	final String LISTING_URL_JSON = "http://"+SERVER_IP+":3000/tweets.json";
 	final String INDEX_URL = "http://"+SERVER_IP+":3000/tweets";
     final String TWEET_CREATING_URL = "http://"+SERVER_IP+":3000/tweet/create";
+    
+    private static final String PREF_KEY_STRING_TWEET = "pref_key_string_tweet";
 
 	public void loadTweets(CallBack callBack) {
 		UrlContentLoader loader = new UrlContentLoader(LISTING_URL_JSON);
@@ -51,6 +57,10 @@ public class TweetModel {
 	    provider.setCredentials(scope, myCredentials);
         
 	    return provider;
+    }
+    
+    public String getTweetCache(Context context) {
+    	return PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_KEY_STRING_TWEET, null);
     }
     
 	public void addTweet(final String text) {
@@ -81,5 +91,13 @@ public class TweetModel {
 		};
         
 		new Thread(runnable).start();
+	}
+
+	/**
+	 * @param activity
+	 * @param content
+	 */
+	public void saveCache(Context context, String content) {
+		 PreferenceManager.getDefaultSharedPreferences(context).edit().putString(PREF_KEY_STRING_TWEET, content).commit();
 	}
 }

@@ -75,6 +75,11 @@ public class PlaceholderFragment extends Fragment implements UrlContentLoader.Ca
     }
    
 	private void loadTweets(){
+		TweetModel model = new TweetModel();
+        String cacheString = model.getTweetCache(getActivity());
+        if(cacheString!=null) {
+        	updateList(cacheString);
+        }
         new TweetModel().loadTweets(this);
 	}
 
@@ -83,17 +88,23 @@ public class PlaceholderFragment extends Fragment implements UrlContentLoader.Ca
 	 */
 	@Override
 	public void onSucceed(String content) {
-       try {
-			JSONArray array = new JSONArray(content);
+    	updateList(content);
+        new TweetModel().saveCache(getActivity(), content);
+	}
+    
+	private void updateList(String jsonContent) {
+		try {
+			JSONArray array = new JSONArray(jsonContent);
             List<JSONObject> tweetArray = toJsonObjList(array);
             BaseViewBinderAdapter<JSONObject> adapter = new BaseViewBinderAdapter<JSONObject>(getActivity(), tweetArray, R.layout.tweet_item, new ViewBinder<JSONObject>() {
-				@Override
-				public void bindView(int position, View view, JSONObject item, ViewGroup parent) {
-					((TextView)view).setText(item.optString("content"));
-				}
-			}) ;
+    			@Override
+    			public void bindView(int position, View view, JSONObject item, ViewGroup parent) {
+    				((TextView)view).setText(item.optString("content"));
+    			}
+    		}) ;
             mListView.setAdapter(adapter);
 		} catch (JSONException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
