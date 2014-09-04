@@ -20,7 +20,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.CoreProtocolPNames;
 
-import android.app.Activity;
 import android.content.Context;
 import android.preference.PreferenceManager;
 

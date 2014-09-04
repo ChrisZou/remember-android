@@ -26,9 +26,6 @@
             </intent-filter>
         </activity>
         
-        <activity android:name="com.chriszou.remember.ShufferActivity_" 
-            android:screenOrientation="portrait"
-            />
         <receiver android:name="com.chriszou.remember.BootReceiver"/>
         <receiver android:name="com.chriszou.androidlibs.AlarmReceiver"/>
     </application>

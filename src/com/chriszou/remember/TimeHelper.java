@@ -5,7 +5,11 @@
  */
 package com.chriszou.remember;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+
+import android.annotation.SuppressLint;
 
 /**
  * @author zouyong
@@ -33,4 +37,10 @@ public class TimeHelper {
         
         return time;
     }
+
+	@SuppressLint("SimpleDateFormat")
+	public static String getTodayString() {
+		SimpleDateFormat sdfDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		return sdfDateFormat.format(new Date());
+	}
 }

@@ -5,22 +5,19 @@
  */
 package com.chriszou.remember;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
+import android.app.Fragment;
 import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,8 +34,8 @@ import com.chriszou.remember.model.TweetModel;
  * @author zouyong
  *
  */
-@EActivity(R.layout.shuffer_activity)
-public class ShufferActivity extends Activity implements CallBack{
+@EFragment(R.layout.shuffer_activity)
+public class ReminderFragment extends Fragment implements CallBack {
     
     public static final String EXTRA_STRING_REMINDER_TYPE = "extra_string_reminder_type";
     public static enum ReminderType{
@@ -60,7 +57,8 @@ public class ShufferActivity extends Activity implements CallBack{
 		try {
 			JSONArray array = new JSONArray(content);
 			List<JSONObject> tweetArray = getShowList(toJsonObjList(array));
-            BaseViewBinderAdapter<JSONObject> adapter = new BaseViewBinderAdapter<JSONObject>(this, tweetArray, R.layout.tweet_item, new ViewBinder<JSONObject>() {
+			BaseViewBinderAdapter<JSONObject> adapter = new BaseViewBinderAdapter<JSONObject>(getActivity(), tweetArray,
+					R.layout.tweet_item, new ViewBinder<JSONObject>() {
 				@Override
 				public void bindView(int position, View view, JSONObject item, ViewGroup parent) {
 					TextView textView= (TextView)view;
@@ -80,7 +78,7 @@ public class ShufferActivity extends Activity implements CallBack{
 	 * @return 
 	 */
 	private List<JSONObject> getShowList(List<JSONObject> items) {
-        String typeString = getIntent().getExtras().getString(EXTRA_STRING_REMINDER_TYPE, ReminderType.SHUFFLE.name());
+		String typeString = getArguments().getString(EXTRA_STRING_REMINDER_TYPE, ReminderType.SHUFFLE.name());
 		ReminderType type = ReminderType.valueOf(typeString);
         List<JSONObject>result = null; 
 		switch (type){
@@ -89,24 +87,24 @@ public class ShufferActivity extends Activity implements CallBack{
             Collections.shuffle(result,new Random(System.nanoTime()));
             break;
 		case TODAY:
-            result = new ArrayList<JSONObject>();
-            String todayString = getTodayString();
-			for(JSONObject item: items){
-				String createdTime = item.optString("created_at");
-                if(createdTime.startsWith(todayString)) {
-                	result.add(item);
-                }
-			}
+			result = getTodayTweets(items);
 		}
         
 		return result;
 	}
     
-	@SuppressLint("SimpleDateFormat")
-	private String getTodayString() {
-		SimpleDateFormat sdfDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        return sdfDateFormat.format(new Date());
+	private List<JSONObject> getTodayTweets(List<JSONObject> items) {
+		List<JSONObject> result = new ArrayList<JSONObject>();
+		String todayString = TimeHelper.getTodayString();
+		for (JSONObject item : items) {
+			String createdTime = item.optString("created_at");
+			if (createdTime.startsWith(todayString)) {
+				result.add(item);
+			}
+		}
+		return result;
 	}
+
 
 	/* (non-Javadoc)
 	 * @see com.chriszou.androidlibs.UrlContentLoader.CallBack#onFailed(java.lang.String)

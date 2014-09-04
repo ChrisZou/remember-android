@@ -37,8 +37,8 @@ import com.chriszou.remember.model.TweetModel;
  *
  */
 @EFragment
-public class PlaceholderFragment extends Fragment implements UrlContentLoader.CallBack{
-	public PlaceholderFragment() {
+public class MainFragment extends Fragment implements UrlContentLoader.CallBack {
+	public MainFragment() {
 	}
 
     @ViewById(R.id.main_listview)
@@ -80,7 +80,7 @@ public class PlaceholderFragment extends Fragment implements UrlContentLoader.Ca
         if(cacheString!=null) {
         	updateList(cacheString);
         }
-        new TweetModel().loadTweets(this);
+		new TweetModel().loadTweets(this);
 	}
 
 	/* (non-Javadoc)

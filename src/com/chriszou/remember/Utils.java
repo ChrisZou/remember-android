@@ -9,7 +9,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import com.chriszou.androidlibs.AlarmHelper;
-import com.chriszou.remember.ShufferActivity.ReminderType;
+import com.chriszou.remember.ReminderFragment.ReminderType;
 
 /**
  * @author zouyong
@@ -26,12 +26,20 @@ public class Utils {
 	}
 
 	private static void setupAlarm(Context context, int id, int hour, int minute, ReminderType type) {
-		AlarmHelper helper = new AlarmHelper(context);
 
-		// First alarm
 		Bundle extra = new Bundle();
-		extra.putString(ShufferActivity_.EXTRA_STRING_REMINDER_TYPE, type.name());
+		extra.putString(ReminderFragment.EXTRA_STRING_REMINDER_TYPE, type.name());
 		long time1 = TimeHelper.getNextHourAndMinite(hour, minute);
+
+		AlarmHelper helper = new AlarmHelper(context);
 		helper.setAlarm(context, id, time1, RemindAlarmRunner.class.getName(), extra);
+	}
+
+	public static void setupTestingAlarm(Context context) {
+		Bundle extra = new Bundle();
+		extra.putString(ReminderFragment.EXTRA_STRING_REMINDER_TYPE, ReminderType.SHUFFLE.name());
+
+		AlarmHelper helper = new AlarmHelper(context);
+		helper.setAlarm(context, 0, System.currentTimeMillis() + 5 * 1000, RemindAlarmRunner.class.getName(), extra);
 	}
 }
