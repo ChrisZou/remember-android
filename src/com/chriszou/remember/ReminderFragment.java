@@ -46,6 +46,11 @@ public class ReminderFragment extends Fragment implements CallBack {
     
 	@AfterViews
 	void loadData() {
+		TweetModel model = new TweetModel();
+		String cacheString = model.getTweetCache(getActivity());
+		if (cacheString != null) {
+			updateList(cacheString);
+		}
 		new TweetModel().loadTweets(this);
 	}
 
@@ -54,8 +59,13 @@ public class ReminderFragment extends Fragment implements CallBack {
 	 */
 	@Override
 	public void onSucceed(String content) {
+		updateList(content);
+		new TweetModel().saveCache(getActivity(), content);
+	}
+
+	private void updateList(String contentJson) {
 		try {
-			JSONArray array = new JSONArray(content);
+			JSONArray array = new JSONArray(contentJson);
 			List<JSONObject> tweetArray = getShowList(toJsonObjList(array));
 			BaseViewBinderAdapter<JSONObject> adapter = new BaseViewBinderAdapter<JSONObject>(getActivity(), tweetArray,
 					R.layout.tweet_item, new ViewBinder<JSONObject>() {
@@ -93,6 +103,12 @@ public class ReminderFragment extends Fragment implements CallBack {
 		return result;
 	}
     
+	/**
+	 * Get the tweets that was created today
+	 * 
+	 * @param items
+	 * @return
+	 */
 	private List<JSONObject> getTodayTweets(List<JSONObject> items) {
 		List<JSONObject> result = new ArrayList<JSONObject>();
 		String todayString = TimeHelper.getTodayString();
@@ -114,6 +130,12 @@ public class ReminderFragment extends Fragment implements CallBack {
         L.l(msg);
 	}
     
+	/**
+	 * Convert a JSONArray object to a list of JSONObject
+	 * 
+	 * @param array
+	 * @return
+	 */
 	private List<JSONObject> toJsonObjList(JSONArray array) {
 		List<JSONObject> objs = new ArrayList<JSONObject>();
         for(int i=0; i<array.length(); i++) {

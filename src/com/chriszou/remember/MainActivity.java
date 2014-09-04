@@ -15,6 +15,7 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		// Whether to start this activity as a reminder
 		boolean reminder = getIntent().getBooleanExtra(EXTRA_BOOL_REMINDER, false);
 		Fragment fragment;
 		if(reminder) {

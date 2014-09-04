@@ -75,12 +75,15 @@ public class MainFragment extends Fragment implements UrlContentLoader.CallBack 
     }
    
 	private void loadTweets(){
+		/*
+		 * First load cache, then load from network.
+		 */
 		TweetModel model = new TweetModel();
         String cacheString = model.getTweetCache(getActivity());
         if(cacheString!=null) {
         	updateList(cacheString);
         }
-		new TweetModel().loadTweets(this);
+		model.loadTweets(this);
 	}
 
 	/* (non-Javadoc)
