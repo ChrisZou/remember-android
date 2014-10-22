@@ -1,6 +1,6 @@
 /**
  * PlaceholderFragment.java
- * 
+ *
  * Created by zouyong on Jul 8, 2014,2014
  */
 package com.chriszou.remember;
@@ -38,8 +38,8 @@ import com.chriszou.remember.model.TweetModel;
  * @author zouyong
  *
  */
-@EFragment
-public class MainFragment extends Fragment implements UrlContentLoader.Callback {
+@EFragment(R.layout.fragment_main)
+public class MainFragment extends Fragment implements UrlContentLoader.Callback, ViewBinder<JSONObject> {
 	public MainFragment() {
 	}
 
@@ -50,12 +50,6 @@ public class MainFragment extends Fragment implements UrlContentLoader.Callback 
 	Button mAddBtn;
 	@ViewById(R.id.main_add_edit)
 	EditText mAddEdit;
-
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-		return rootView;
-	}
 
 	@AfterViews
 	void initViews() {
@@ -103,19 +97,18 @@ public class MainFragment extends Fragment implements UrlContentLoader.Callback 
 		try {
 			JSONArray array = new JSONArray(jsonContent);
 			List<JSONObject> tweetArray = toJsonObjList(array);
-			BaseViewBinderAdapter<JSONObject> adapter = new BaseViewBinderAdapter<JSONObject>(getActivity(), tweetArray, R.layout.tweet_item, new ViewBinder<JSONObject>() {
-				@Override
-				public void bindView(int position, View view, JSONObject item, ViewGroup parent) {
-					((TextView)view).setText(item.optString("content"));
-				}
-			}) ;
+			BaseViewBinderAdapter<JSONObject> adapter = new BaseViewBinderAdapter<JSONObject>(getActivity(), tweetArray, R.layout.tweet_item, this);
 			mListView.setAdapter(adapter);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
+    /**
+     * Converting an JSONArray object to a list of JSONObject
+     * @param array
+     * @return
+     */
 	private List<JSONObject> toJsonObjList(JSONArray array) {
 		List<JSONObject> objs = new ArrayList<JSONObject>();
 		for(int i=0; i<array.length(); i++) {
@@ -142,4 +135,9 @@ public class MainFragment extends Fragment implements UrlContentLoader.Callback 
 	@Override
 	public void onCanceld() {
 	}
+
+    @Override
+    public void bindView(int position, View view, JSONObject item, ViewGroup parent) {
+        ((TextView)view).setText(item.optString("content"));
+    }
 }

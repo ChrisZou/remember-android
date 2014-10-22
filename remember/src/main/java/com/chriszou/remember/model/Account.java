@@ -34,23 +34,24 @@ public class Account {
 
     private static final String PREF_STRING_AUTH_TOKEN = "pref_string_auth_token";
     public static boolean loggedIn() {
-        return savedToken()!=null;
+        return getSavedToken()!=null;
     }
 
-    private static String savedToken() {
+    private static String getSavedToken() {
         return Prefs.getString(PREF_STRING_AUTH_TOKEN, null);
     }
 
+    private static void saveToken(String token) {
+        Prefs.putString(PREF_STRING_AUTH_TOKEN, token);
+    }
+
     public static void login(String email, String password, LoginCallback callback) {
-
-        HttpParams params = new BasicHttpParams();
-        HttpConnectionParams.setConnectionTimeout(params, 5 * 1000);
-        HttpConnectionParams.setSoTimeout(params, 5*1000);
-
-        DefaultHttpClient client = new DefaultHttpClient(params);
-        HttpPost post = new HttpPost(LOGIN_URL);
-        L.l("login: " + " email:" + email + ", password: " + password);
         try {
+            HttpPost post = new HttpPost(LOGIN_URL);
+            // setup the request headers
+            post.setHeader("Accept", "application/json");
+            post.setHeader("Content-Type", "application/json");
+
             // add the user email and password to the params
             JSONObject userObj = new JSONObject();
             userObj.put("email", email);
@@ -58,27 +59,26 @@ public class Account {
             StringEntity se = new StringEntity(userObj.toString());
             post.setEntity(se);
 
-            // setup the request headers
-            post.setHeader("Accept", "application/json");
-            post.setHeader("Content-Type", "application/json");
+            //Set time out to 5 seconds
+            HttpParams params = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(params, 5 * 1000);
+            HttpConnectionParams.setSoTimeout(params, 5*1000);
+            DefaultHttpClient client = new DefaultHttpClient(params);
 
             HttpResponse response = client.execute(post);
-            if (response!=null) {
-                String responseString = UrlUtils.responseToString(response);
-                JSONObject json = new JSONObject(responseString);
-                if (response.getStatusLine().getStatusCode() == 200) {
-                    String authToken = json.optJSONObject("data").optString("auth_token");
-                    Prefs.putString(PREF_STRING_AUTH_TOKEN, authToken);
-                    callback.onLoginResult(true, null);
-                } else {
-                    callback.onLoginResult(false, json.optString("error_msg"));
-                }
+            String responseString = UrlUtils.responseToString(response);
+            JSONObject json = new JSONObject(responseString);
+            if (response.getStatusLine().getStatusCode() == 200) {
+                String authToken = json.optJSONObject("data").optString("auth_token");
+                saveToken(authToken);
+                callback.onLoginResult(true, null);
+            } else {
+                callback.onLoginResult(false, json.optString("error_msg"));
             }
         } catch (Exception e) {
             e.printStackTrace();
             callback.onLoginResult(false, e.getMessage());
         }
-
     }
 
     public static interface LoginCallback {

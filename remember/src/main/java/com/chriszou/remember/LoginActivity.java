@@ -27,7 +27,6 @@ public class LoginActivity extends Activity{
 
     @Click(R.id.login_button)
     void login() {
-        L.l("login");
         String email = mEmailEdit.getText().toString().trim();
         String password = mPasswordEdit.getText().toString().trim();
 
@@ -38,7 +37,6 @@ public class LoginActivity extends Activity{
 
     @Background
     void performLogin(String email, String password) {
-        L.l("login: "+" email:"+email+", password: "+password);
         Account.login(email, password, new Account.LoginCallback() {
             @Override
             public void onLoginResult(boolean succeed, String errorMsg) {

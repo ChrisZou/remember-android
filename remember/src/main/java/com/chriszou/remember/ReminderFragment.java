@@ -1,6 +1,6 @@
 /**
  * ShufferActivity.java
- * 
+ *
  * Created by zouyong on Aug 9, 2014,2014
  */
 package com.chriszou.remember;
@@ -35,15 +35,18 @@ import com.chriszou.remember.model.TweetModel;
  *
  */
 @EFragment(R.layout.shuffer_activity)
-public class ReminderFragment extends Fragment implements Callback {
-    
+public class ReminderFragment extends Fragment implements Callback, ViewBinder<JSONObject> {
+
     public static final String EXTRA_STRING_REMINDER_TYPE = "extra_string_reminder_type";
+
     public static enum ReminderType{
-    	SHUFFLE, TODAY;
+    	SHUFFLE, //Random the list
+        TODAY;  //Show today's tweets
     }
+
 	@ViewById(R.id.shuffer_listview)
 	ListView mListView;
-    
+
 	@AfterViews
 	void loadData() {
 		TweetModel model = new TweetModel();
@@ -54,43 +57,25 @@ public class ReminderFragment extends Fragment implements Callback {
 		new TweetModel().loadTweets(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.chriszou.androidlibs.UrlContentLoader.CallBack#onSucceed(java.lang.String)
-	 */
-	@Override
-	public void onSucceed(String content) {
-		updateList(content);
-		new TweetModel().saveCache(getActivity(), content);
-	}
-
 	private void updateList(String contentJson) {
 		try {
 			JSONArray array = new JSONArray(contentJson);
-			List<JSONObject> tweetArray = getShowList(toJsonObjList(array));
-			BaseViewBinderAdapter<JSONObject> adapter = new BaseViewBinderAdapter<JSONObject>(getActivity(), tweetArray,
-					R.layout.tweet_item, new ViewBinder<JSONObject>() {
-				@Override
-				public void bindView(int position, View view, JSONObject item, ViewGroup parent) {
-					TextView textView= (TextView)view;
-					textView.setText(item.optString("content"));
-                    int bgColor = position<5 ? Color.parseColor("#D6E1A4") : Color.TRANSPARENT;
-                    textView.setBackgroundColor(bgColor);
-				}
-			}) ;
+			List<JSONObject> tweets = getShowList(toJsonObjList(array));
+			BaseViewBinderAdapter<JSONObject> adapter = new BaseViewBinderAdapter<JSONObject>(getActivity(), tweets, R.layout.tweet_item, this);
             mListView.setAdapter(adapter);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
-    
+
 	/**
 	 * According to the reminder type, get the sublist to show in the UI
-	 * @return 
+	 * @return
 	 */
 	private List<JSONObject> getShowList(List<JSONObject> items) {
 		String typeString = getArguments().getString(EXTRA_STRING_REMINDER_TYPE, ReminderType.SHUFFLE.name());
 		ReminderType type = ReminderType.valueOf(typeString);
-        List<JSONObject>result = null; 
+        List<JSONObject>result = null;
 		switch (type){
 		case SHUFFLE:
             result = items;
@@ -99,13 +84,13 @@ public class ReminderFragment extends Fragment implements Callback {
 		case TODAY:
 			result = getTodayTweets(items);
 		}
-        
+
 		return result;
 	}
-    
+
 	/**
 	 * Get the tweets that was created today
-	 * 
+	 *
 	 * @param items
 	 * @return
 	 */
@@ -121,6 +106,14 @@ public class ReminderFragment extends Fragment implements Callback {
 		return result;
 	}
 
+    /* (non-Javadoc)
+     * @see com.chriszou.androidlibs.UrlContentLoader.CallBack#onSucceed(java.lang.String)
+     */
+    @Override
+    public void onSucceed(String content) {
+        updateList(content);
+        new TweetModel().saveCache(getActivity(), content);
+    }
 
 	/* (non-Javadoc)
 	 * @see com.chriszou.androidlibs.UrlContentLoader.CallBack#onFailed(java.lang.String)
@@ -129,10 +122,10 @@ public class ReminderFragment extends Fragment implements Callback {
 	public void onFailed(String msg) {
         L.l(msg);
 	}
-    
+
 	/**
 	 * Convert a JSONArray object to a list of JSONObject
-	 * 
+	 *
 	 * @param array
 	 * @return
 	 */
@@ -144,7 +137,7 @@ public class ReminderFragment extends Fragment implements Callback {
             	objs.add(obj);
             }
         }
-        
+
         return objs;
 	}
 
@@ -152,7 +145,14 @@ public class ReminderFragment extends Fragment implements Callback {
 	 * @see com.chriszou.androidlibs.UrlContentLoader.CallBack#onCanceld()
 	 */
 	@Override
-	public void onCanceld() {
-	}
-    
+	public void onCanceld() {}
+
+    @Override
+    public void bindView(int position, View view, JSONObject item, ViewGroup parent) {
+        TextView textView= (TextView)view;
+        textView.setText(item.optString("content"));
+        //Hightlight the first 5 items, means at least you should review these 5 items;
+        int bgColor = position< 5 ? Color.parseColor("#D6E1A4") : Color.TRANSPARENT;
+        textView.setBackgroundColor(bgColor);
+    }
 }

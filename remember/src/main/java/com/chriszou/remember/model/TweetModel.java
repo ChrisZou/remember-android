@@ -69,20 +69,6 @@ public class TweetModel {
 		return true;
 	}
 
-	private BasicCredentialsProvider getCredentialsProvider() {
-		//Create our AuthScope
-		AuthScope scope = new AuthScope(SERVER_IP, 3000);
-		String username = "chris";
-		String password = "chuang";
-		//Set Credentials
-		UsernamePasswordCredentials myCredentials = new UsernamePasswordCredentials( username, password );
-		//Set Provider
-		BasicCredentialsProvider provider = new BasicCredentialsProvider();
-		provider.setCredentials(scope, myCredentials);
-
-		return provider;
-	}
-
 	public String getTweetCache(Context context) {
 		return PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_KEY_STRING_TWEET, null);
 	}
@@ -94,21 +80,17 @@ public class TweetModel {
 				try {
 					List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 					nameValuePairs.add(new BasicNameValuePair("tweet[content]", text));
-
 					HttpPost post = new HttpPost(TWEET_CREATING_URL);
-					post.setHeader("User-Agent", "Remember Android");
 					post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
 					DefaultHttpClient client = new DefaultHttpClient();
-					client.setCredentialsProvider(getCredentialsProvider());
-					client.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "RememberAndroidApp");
 					client.execute(post);
 
 				} catch (ClientProtocolException e) {
-					L.l(e.getMessage());
+					L.e(e.getMessage());
 					e.printStackTrace();
 				} catch (IOException e) {
-					L.l(e.getMessage());
+					L.e(e.getMessage());
 					e.printStackTrace();
 				}
 			}

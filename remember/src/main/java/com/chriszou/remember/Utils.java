@@ -1,6 +1,6 @@
 /**
  * Utils.java
- * 
+ *
  * Created by zouyong on Aug 20, 2014,2014
  */
 package com.chriszou.remember;
@@ -13,12 +13,11 @@ import com.chriszou.remember.ReminderFragment.ReminderType;
 
 /**
  * @author zouyong
- * 
+ *
  */
 public class Utils {
 	public static void setupAlarms(Context context) {
 
-		// First alarm
 		setupAlarm(context, 1, 12, 30, ReminderType.SHUFFLE);
 		setupAlarm(context, 2, 18, 30, ReminderType.SHUFFLE);
 		setupAlarm(context, 3, 22, 30, ReminderType.TODAY);
