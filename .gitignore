@@ -24,3 +24,5 @@ proguard/
 
 # Auto-generated files by androidannotation library
 .apt_generated
+
+.idea/workspace.xml
