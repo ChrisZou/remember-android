@@ -1,2 +1,1 @@
-include ':androidlibs'
-include ':remember'
+include ':remember', ':..:androidlibs:androidlibs'

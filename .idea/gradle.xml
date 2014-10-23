@@ -7,9 +7,11 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
+            <option value="$PROJECT_DIR$/.." />
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/androidlibs" />
             <option value="$PROJECT_DIR$/remember" />
+            <option value="$PROJECT_DIR$/../androidlibs" />
+            <option value="$PROJECT_DIR$/../androidlibs/androidlibs" />
           </set>
         </option>
       </GradleProjectSettings>

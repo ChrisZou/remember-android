@@ -32,9 +32,11 @@ android {
 }
 
 dependencies {
-    apt "org.androidannotations:androidannotations:3.0.1"          // add these
-    compile "org.androidannotations:androidannotations-api:3.0.1"  // two lines
-    compile project(':androidlibs')
+    //Add these two lines for androidannotation
+    apt "org.androidannotations:androidannotations:3.0.1"
+    compile 'org.androidannotations:androidannotations-api:3.0.1'
+
+    compile project(':..:androidlibs:androidlibs')
 }
 
 apt {

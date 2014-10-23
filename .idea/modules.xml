@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Remember.iml" filepath="$PROJECT_DIR$/Remember.iml" />
-      <module fileurl="file://$PROJECT_DIR$/androidlibs/androidlibs.iml" filepath="$PROJECT_DIR$/androidlibs/androidlibs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../androidlibs/androidlibs/androidlibs-androidlibs.iml" filepath="$PROJECT_DIR$/../androidlibs/androidlibs/androidlibs-androidlibs.iml" />
       <module fileurl="file://$PROJECT_DIR$/remember/remember.iml" filepath="$PROJECT_DIR$/remember/remember.iml" />
     </modules>
   </component>
