@@ -1,27 +1,21 @@
 package com.chriszou.remember.model;
 
-import android.util.Log;
-
-import com.chriszou.androidlibs.L;
+import com.chriszou.androidlibs.HttpUtils;
 import com.chriszou.androidlibs.Prefs;
-import com.chriszou.androidlibs.UrlUtils;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpResponseException;
-import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by zouyong on 10/20/14.
@@ -30,14 +24,13 @@ public class Account {
 
     private static final String SERVER_URL = "http://10.197.32.129:3000/";
     private static final String LOGIN_URL = SERVER_URL + "mobile_session";
-    private static final String LOGOUT_ULR = LOGIN_URL;
 
     private static final String PREF_STRING_AUTH_TOKEN = "pref_string_auth_token";
     public static boolean loggedIn() {
-        return getSavedToken()!=null;
+        return getAuthToken()!=null;
     }
 
-    private static String getSavedToken() {
+    public static String getAuthToken() {
         return Prefs.getString(PREF_STRING_AUTH_TOKEN, null);
     }
 
@@ -47,26 +40,17 @@ public class Account {
 
     public static void login(String email, String password, LoginCallback callback) {
         try {
-            HttpPost post = new HttpPost(LOGIN_URL);
-            // setup the request headers
-            post.setHeader("Accept", "application/json");
-            post.setHeader("Content-Type", "application/json");
-
             // add the user email and password to the params
             JSONObject userObj = new JSONObject();
             userObj.put("email", email);
             userObj.put("password", password);
-            StringEntity se = new StringEntity(userObj.toString());
-            post.setEntity(se);
 
-            //Set time out to 5 seconds
-            HttpParams params = new BasicHttpParams();
-            HttpConnectionParams.setConnectionTimeout(params, 5 * 1000);
-            HttpConnectionParams.setSoTimeout(params, 5*1000);
-            DefaultHttpClient client = new DefaultHttpClient(params);
+            List<Header> headers = new ArrayList<Header>();
+            headers.add(new BasicHeader(HttpUtils.HEADER_CONTENT_TYPE, HttpUtils.CONTENT_TYPE_JSON));
 
-            HttpResponse response = client.execute(post);
-            String responseString = UrlUtils.responseToString(response);
+            HttpResponse response = HttpUtils.postJson(LOGIN_URL, userObj.toString(), headers);
+
+            String responseString = HttpUtils.responseToString(response);
             JSONObject json = new JSONObject(responseString);
             if (response.getStatusLine().getStatusCode() == 200) {
                 String authToken = json.optJSONObject("data").optString("auth_token");

@@ -4,9 +4,8 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 
-import com.chriszou.androidlibs.L;
-import com.chriszou.androidlibs.Prefs;
 import com.chriszou.remember.model.Account;
+import com.chriszou.remember.util.AlarmUtils;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -35,7 +34,7 @@ public class MainActivity extends Activity {
             fragment.setArguments(getIntent().getExtras());
         } else {
             fragment = new MainFragment_();
-            Utils.setupAlarms(this);
+            AlarmUtils.setupAlarms(this);
         }
         getFragmentManager().beginTransaction().add(R.id.container, fragment).commit();
     }

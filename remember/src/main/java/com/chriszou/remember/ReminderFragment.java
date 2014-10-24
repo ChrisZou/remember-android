@@ -5,39 +5,36 @@
  */
 package com.chriszou.remember;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ViewById;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.app.Fragment;
 import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.chriszou.androidlibs.BaseViewBinderAdapter;
-import com.chriszou.androidlibs.BaseViewBinderAdapter.ViewBinder;
-import com.chriszou.androidlibs.L;
-import com.chriszou.androidlibs.UrlContentLoader.Callback;
-import com.chriszou.remember.model.TweetModel;
+import com.chriszou.remember.model.Tweet;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ViewById;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 /**
  * @author zouyong
  *
  */
 @EFragment(R.layout.shuffer_activity)
-public class ReminderFragment extends Fragment implements Callback, ViewBinder<JSONObject> {
+public class ReminderFragment extends TweetListFragment {
 
     public static final String EXTRA_STRING_REMINDER_TYPE = "extra_string_reminder_type";
+
+    @Override
+    protected ListView getListView() {
+        return mListView;
+    }
 
     public static enum ReminderType{
     	SHUFFLE, //Random the list
@@ -49,33 +46,22 @@ public class ReminderFragment extends Fragment implements Callback, ViewBinder<J
 
 	@AfterViews
 	void loadData() {
-		TweetModel model = new TweetModel();
-		String cacheString = model.getTweetCache(getActivity());
-		if (cacheString != null) {
-			updateList(cacheString);
-		}
-		new TweetModel().loadTweets(this);
+        loadTweets();
 	}
 
-	private void updateList(String contentJson) {
-		try {
-			JSONArray array = new JSONArray(contentJson);
-			List<JSONObject> tweets = getShowList(toJsonObjList(array));
-			BaseViewBinderAdapter<JSONObject> adapter = new BaseViewBinderAdapter<JSONObject>(getActivity(), tweets, R.layout.tweet_item, this);
-            mListView.setAdapter(adapter);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-	}
+    @Override
+    protected List<Tweet> preprocessTweets(List<Tweet> tweets) {
+        return getShowList(tweets);
+    }
 
-	/**
+    /**
 	 * According to the reminder type, get the sublist to show in the UI
 	 * @return
 	 */
-	private List<JSONObject> getShowList(List<JSONObject> items) {
+	private List<Tweet> getShowList(List<Tweet> items) {
 		String typeString = getArguments().getString(EXTRA_STRING_REMINDER_TYPE, ReminderType.SHUFFLE.name());
 		ReminderType type = ReminderType.valueOf(typeString);
-        List<JSONObject>result = null;
+        List<Tweet>result = null;
 		switch (type){
 		case SHUFFLE:
             result = items;
@@ -83,6 +69,7 @@ public class ReminderFragment extends Fragment implements Callback, ViewBinder<J
             break;
 		case TODAY:
 			result = getTodayTweets(items);
+            break;
 		}
 
 		return result;
@@ -94,11 +81,11 @@ public class ReminderFragment extends Fragment implements Callback, ViewBinder<J
 	 * @param items
 	 * @return
 	 */
-	private List<JSONObject> getTodayTweets(List<JSONObject> items) {
-		List<JSONObject> result = new ArrayList<JSONObject>();
+	private List<Tweet> getTodayTweets(List<Tweet> items) {
+		List<Tweet> result = new ArrayList<Tweet>();
 		String todayString = TimeHelper.getTodayString();
-		for (JSONObject item : items) {
-			String createdTime = item.optString("created_at");
+		for (Tweet item : items) {
+			String createdTime = item.getContent();
 			if (createdTime.startsWith(todayString)) {
 				result.add(item);
 			}
@@ -106,51 +93,10 @@ public class ReminderFragment extends Fragment implements Callback, ViewBinder<J
 		return result;
 	}
 
-    /* (non-Javadoc)
-     * @see com.chriszou.androidlibs.UrlContentLoader.CallBack#onSucceed(java.lang.String)
-     */
     @Override
-    public void onSucceed(String content) {
-        updateList(content);
-        new TweetModel().saveCache(getActivity(), content);
-    }
-
-	/* (non-Javadoc)
-	 * @see com.chriszou.androidlibs.UrlContentLoader.CallBack#onFailed(java.lang.String)
-	 */
-	@Override
-	public void onFailed(String msg) {
-        L.l(msg);
-	}
-
-	/**
-	 * Convert a JSONArray object to a list of JSONObject
-	 *
-	 * @param array
-	 * @return
-	 */
-	private List<JSONObject> toJsonObjList(JSONArray array) {
-		List<JSONObject> objs = new ArrayList<JSONObject>();
-        for(int i=0; i<array.length(); i++) {
-            JSONObject obj = array.optJSONObject(i);
-            if(obj!=null) {
-            	objs.add(obj);
-            }
-        }
-
-        return objs;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.chriszou.androidlibs.UrlContentLoader.CallBack#onCanceld()
-	 */
-	@Override
-	public void onCanceld() {}
-
-    @Override
-    public void bindView(int position, View view, JSONObject item, ViewGroup parent) {
+    public void bindView(int position, View view, Tweet item, ViewGroup parent) {
         TextView textView= (TextView)view;
-        textView.setText(item.optString("content"));
+        textView.setText(item.getContent());
         //Hightlight the first 5 items, means at least you should review these 5 items;
         int bgColor = position< 5 ? Color.parseColor("#D6E1A4") : Color.TRANSPARENT;
         textView.setBackgroundColor(bgColor);

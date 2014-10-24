@@ -5,105 +5,98 @@
  */
 package com.chriszou.remember.model;
 
+import android.text.TextUtils;
+
+import com.chriszou.androidlibs.HttpUtils;
+import com.chriszou.androidlibs.Prefs;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpHead;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.CoreProtocolPNames;
-
-import android.content.Context;
-import android.preference.PreferenceManager;
-
-import com.chriszou.androidlibs.L;
-import com.chriszou.androidlibs.Prefs;
-import com.chriszou.androidlibs.UrlContentLoader;
-import com.chriszou.androidlibs.UrlContentLoader.Callback;
-
 /**
- * @author zouyong
+ * Class for doing Tweets CRUD.
+ * Most method in this class involve networking, ensure they are called from a thread other than UI thread
  *
+ * @author zouyong
  */
 public class TweetModel {
-	final String SERVER_IP = "112.124.121.155";
-	final String LISTING_URL_JSON = "http://"+SERVER_IP+"/tweets_mobile.json";
-	final String TWEET_CREATING_URL = "http://"+SERVER_IP+"/tweets_mobile";
+    final String DEV_SERVER = "10.197.32.129:3000";
+    final String REAL_SERVER = "112.124.121.155";
+    final String SERVER_URL = "http://" + DEV_SERVER;
+//    final String SERVER_URL = "http://"+ REAL_SERVER;
 
-	private static final String PREF_STRING_ETAG = "pref_string_etag";
-	private static final String PREF_KEY_STRING_TWEET = "pref_key_string_tweet";
+    final String LISTING_URL_JSON = SERVER_URL + "/tweets_mobile.json";
+    final String TWEET_CREATING_URL = SERVER_URL + "/tweets_mobile";
 
-	public void loadTweets(Callback callBack) {
-		if(isUpdated()) {
-			UrlContentLoader loader = new UrlContentLoader(LISTING_URL_JSON);
-			loader.execute(callBack);
-		}
-	}
+    private static final String PREF_STRING_ETAG = "pref_string_etag";
+    private static final String PREF_KEY_STRING_TWEET = "pref_key_string_tweet";
 
-	private boolean isUpdated() {
-		try {
-			HttpClient client = new DefaultHttpClient();
-			HttpHead head = new HttpHead(LISTING_URL_JSON);
-			HttpResponse response  = client.execute(head);
-			String etag = response.getFirstHeader("ETag").getValue();
-			String oldEtag = Prefs.getString(PREF_STRING_ETAG, "");
-			if(oldEtag.equals(etag)) {
-				return false;
-			}
-			Prefs.putString(PREF_STRING_ETAG, etag);
-			return true;
-		} catch (Exception e) {
-			L.l("Exception: "+e.getMessage());
-			e.printStackTrace();
-		}
-		return true;
-	}
+    public List<Tweet> allTweets() throws IOException {
+        String authToken = Account.getAuthToken();
+        if (TextUtils.isEmpty(authToken)) {
+            return Collections.EMPTY_LIST;
+        }
 
-	public String getTweetCache(Context context) {
-		return PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_KEY_STRING_TWEET, null);
-	}
+        if (isUpdated()) {
+            String tweetsJson = HttpUtils.getContent(LISTING_URL_JSON + "/?auth_token=" + authToken);
+            return jsonArrayToTweetList(tweetsJson);
+        } else {
+            return getCachedTweets();
+        }
+    }
 
-	public void addTweet(final String text) {
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				try {
-					List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-					nameValuePairs.add(new BasicNameValuePair("tweet[content]", text));
-					HttpPost post = new HttpPost(TWEET_CREATING_URL);
-					post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+    private List<Tweet> jsonArrayToTweetList(String tweetsJson) {
+        List<Tweet> results = new ArrayList<Tweet>();
+        try {
+            JSONArray array = null;
+            array = new JSONArray(tweetsJson);
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject object = array.optJSONObject(i);
+                Tweet t = Tweet.fromJson(object);
+                results.add(t);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-					DefaultHttpClient client = new DefaultHttpClient();
-					client.execute(post);
+        return results;
+    }
 
-				} catch (ClientProtocolException e) {
-					L.e(e.getMessage());
-					e.printStackTrace();
-				} catch (IOException e) {
-					L.e(e.getMessage());
-					e.printStackTrace();
-				}
-			}
-		};
+    /**
+     * If data on the server has been updated, otherwise just use the cache rather than doing another request
+     *
+     * @return
+     */
+    private boolean isUpdated() throws IOException {
+        String etag = HttpUtils.getEtag(LISTING_URL_JSON);
+        String oldEtag = Prefs.getString(PREF_STRING_ETAG, "");
+        if (oldEtag.equals(etag)) {
+            return false;
+        } else {
+            Prefs.putString(PREF_STRING_ETAG, etag);
+            return true;
+        }
+    }
 
-		new Thread(runnable).start();
-	}
+    public List<Tweet> getCachedTweets() {
+        String tweetsJson = Prefs.getString(PREF_KEY_STRING_TWEET, null);
+        return tweetsJson==null ? Collections.EMPTY_LIST : jsonArrayToTweetList(tweetsJson);
+    }
 
-	/**
-	 * @param context
-	 * @param content
-	 */
-	public void saveCache(Context context, String content) {
-		Prefs.putString(PREF_KEY_STRING_TWEET, content);
-	}
+    public void addTweet(final Tweet tweet) throws IOException {
+        HttpUtils.postJson(TWEET_CREATING_URL, tweet.toJson());
+    }
+
+    /**
+     * @param content
+     */
+    public void saveCache(String content) {
+        Prefs.putString(PREF_KEY_STRING_TWEET, content);
+    }
 }

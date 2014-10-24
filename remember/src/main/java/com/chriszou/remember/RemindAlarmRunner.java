@@ -1,6 +1,6 @@
 /**
  * RemindAlarmRunner.java
- * 
+ *
  * Created by zouyong on Aug 19, 2014,2014
  */
 package com.chriszou.remember;
@@ -11,6 +11,7 @@ import android.content.Intent;
 import com.chriszou.androidlibs.AlarmHelper;
 import com.chriszou.androidlibs.AlarmRunner;
 import com.chriszou.remember.ReminderFragment.ReminderType;
+import com.chriszou.remember.util.AlarmUtils;
 
 /**
  * @author zouyong
@@ -30,8 +31,8 @@ public class RemindAlarmRunner implements AlarmRunner{
 		activityIntent.putExtra(ReminderFragment.EXTRA_STRING_REMINDER_TYPE, reminderType);
         activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		context.startActivity(activityIntent);
-        
-		Utils.setupAlarms(context);
+
+		AlarmUtils.setupAlarms(context);
 	}
 
 }
