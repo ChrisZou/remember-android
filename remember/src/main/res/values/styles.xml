@@ -22,5 +22,28 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_margin">10dp</item>
     </style>
+
+    <style name="email_edit" parent="login_eidttext">
+        <item name="android:inputType">textEmailAddress</item>
+        <item name="android:hint">@string/hint_email</item>
+    </style>
+
+    <style name="password_edit" parent="login_eidttext">
+        <item name="android:inputType">textPassword</item>
+        <item name="android:hint">@string/hint_password</item>
+    </style>
+
+    <style name="activity_bg">
+        <item name="android:orientation">vertical</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:padding">@dimen/padding_default</item>
+    </style>
+
+    <style name="button_default">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
 </resources>
 

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+              style="@style/activity_bg">
 
     <EditText
         android:id="@+id/login_email"
         style="@style/login_eidttext"
+        android:inputType="textEmailAddress"
         android:hint="Email"/>
     <EditText
         android:id="@+id/login_password"
@@ -15,9 +15,14 @@
         style="@style/login_eidttext"/>
     <Button
         android:id="@+id/login_button"
-        android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        android:text="Login" />
+        style="@style/button_default"
+        android:text="@string/btn_login" />
+    <View style="@style/vfiller"/>
+
+    <Button
+        android:id="@+id/login_register"
+        style="@style/button_default"
+        android:text="@string/btn_register_account"/>
 
 </LinearLayout>
 

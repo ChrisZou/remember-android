@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+         style="@style/activity_bg">
+    <EditText
+        android:id="@+id/register_email"
+        style="@style/email_edit"/>
+    <EditText
+        android:id="@+id/register_password"
+        style="@style/password_edit"/>
+    <EditText
+        android:id="@+id/register_password_confirm"
+        android:hint="@string/hint_confirm_password"
+        style="@style/password_edit"/>
+    <Button
+        android:id="@+id/register" style="@style/button_default"
+        android:text="@string/btn_register"/>
+    <View style="@style/vfiller"/>
+    <Button style="@style/button_default"
+            android:text="@string/btn_has_account_login"/>
+</LinearLayout>

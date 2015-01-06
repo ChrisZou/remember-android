@@ -27,12 +27,12 @@ import java.util.List;
  */
 public class TweetModel {
     final String DEV_SERVER = "10.197.32.129:3000";
-    final String REAL_SERVER = "112.124.121.155";
-    final String SERVER_URL = "http://" + DEV_SERVER;
-//    final String SERVER_URL = "http://"+ REAL_SERVER;
+    final String REAL_SERVER = "woaifuxi.com/api/tweets";
+//    final String TWEETS_ROOT = "http://" + DEV_SERVER;
+    final String TWEETS_ROOT = "http://"+ REAL_SERVER;
 
-    final String LISTING_URL_JSON = SERVER_URL + "/tweets_mobile.json";
-    final String TWEET_CREATING_URL = SERVER_URL + "/tweets_mobile";
+    final String LISTING_URL_JSON = TWEETS_ROOT + "/tweets_mobile.json";
+    final String TWEET_CREATING_URL = TWEETS_ROOT + "/tweets_mobile";
 
     private static final String PREF_STRING_ETAG = "pref_string_etag";
     private static final String PREF_KEY_STRING_TWEET = "pref_key_string_tweet";
@@ -44,7 +44,7 @@ public class TweetModel {
         }
 
         if (isUpdated()) {
-            String tweetsJson = HttpUtils.getContent(LISTING_URL_JSON + "/?auth_token=" + authToken);
+            String tweetsJson = HttpUtils.getContent(TWEETS_ROOT + "/?auth_token=" + authToken);
             return jsonArrayToTweetList(tweetsJson);
         } else {
             return getCachedTweets();
