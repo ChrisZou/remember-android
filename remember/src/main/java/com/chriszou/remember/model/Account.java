@@ -2,17 +2,12 @@ package com.chriszou.remember.model;
 
 import com.chriszou.androidlibs.HttpUtils;
 import com.chriszou.androidlibs.Prefs;
+import com.chriszou.remember.util.UrlLinks;
 import com.google.gson.Gson;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -25,24 +20,23 @@ public class Account {
 
     public static final String BROADCAST_LOGOUT = "broadcast_logout";
 
-    private static final String LOGIN_URL = ServerUtils.SERVER_ROOT + "/login";
-    private static final String REGISTER_URL = ServerUtils.SERVER_ROOT + "/signup";
+    private static final String PREF_STRING_USER = "pref_string_user";
 
-    private static final String PREF_STRING_AUTH_TOKEN = "pref_string_auth_token";
     public static boolean loggedIn() {
-        return getAuthToken()!=null;
+        return currentUser()!=null;
     }
 
-    public static String getAuthToken() {
-        return Prefs.getString(PREF_STRING_AUTH_TOKEN, null);
+    private static void saveUser(String userString) {
+        validateUserJson(userString);
+        Prefs.putString(PREF_STRING_USER, userString);
     }
 
-    private static void saveToken(String token) {
-        Prefs.putString(PREF_STRING_AUTH_TOKEN, token);
+    private static void validateUserJson(String userString) {
+        new Gson().fromJson(userString, User.class);
     }
 
-    private static void removeToken() {
-        Prefs.remove(PREF_STRING_AUTH_TOKEN);
+    private static void removeUser() {
+        Prefs.remove(PREF_STRING_USER);
     }
 
     public static void login(String email, String password, LoginCallback callback) {
@@ -55,16 +49,14 @@ public class Account {
             List<Header> headers = new ArrayList<Header>();
             headers.add(new BasicHeader(HttpUtils.HEADER_CONTENT_TYPE, HttpUtils.CONTENT_TYPE_JSON));
 
-            HttpResponse response = HttpUtils.postJson(LOGIN_URL, userObj.toString(), headers);
+            HttpResponse response = HttpUtils.postJson(UrlLinks.LOGIN_URL, userObj.toString(), headers);
 
             String responseString = HttpUtils.responseToString(response);
-            JSONObject json = new JSONObject(responseString);
-
             if (response.getStatusLine().getStatusCode() == 201) {
-                String authToken = json.optString("auth_token");
-                saveToken(authToken);
+                saveUser(responseString);
                 callback.onLoginResult(true, null);
             } else {
+                JSONObject json = new JSONObject(responseString);
                 callback.onLoginResult(false, json.optString("error_msg"));
             }
         } catch (Exception e) {
@@ -81,17 +73,15 @@ public class Account {
             List<Header> headers = new ArrayList<Header>();
             headers.add(new BasicHeader(HttpUtils.HEADER_CONTENT_TYPE, HttpUtils.CONTENT_TYPE_JSON));
 
-            HttpResponse response = HttpUtils.postJson(REGISTER_URL, json, headers);
+            HttpResponse response = HttpUtils.postJson(UrlLinks.SIGNUP_URL, json, headers);
 
             String responseString = HttpUtils.responseToString(response);
-            JSONObject responseJson = new JSONObject(responseString);
-
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == 201 || statusCode == 200) {
-                String authToken = responseJson.optString("auth_token");
-                saveToken(authToken);
+                saveUser(responseString);
                 callback.onRegisterResult(true, null);
             } else {
+                JSONObject responseJson = new JSONObject(responseString);
                 callback.onRegisterResult(false, responseJson.optString("error_msg"));
             }
         } catch (Exception e) {
@@ -101,7 +91,18 @@ public class Account {
     }
 
     public static void logout() {
-        removeToken();
+        removeUser();
+    }
+
+    public static User currentUser() {
+        String userJson = Prefs.getString(PREF_STRING_USER, null);
+        try {
+            User user = new Gson().fromJson(userJson, User.class);
+            return user;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static interface LoginCallback {

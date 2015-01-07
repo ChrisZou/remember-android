@@ -9,10 +9,10 @@ import android.content.Context;
 import android.os.Bundle;
 
 import com.chriszou.androidlibs.AlarmHelper;
+import com.chriszou.androidlibs.TimeHelper;
 import com.chriszou.remember.RemindAlarmRunner;
 import com.chriszou.remember.ReminderFragment;
 import com.chriszou.remember.ReminderFragment.ReminderType;
-import com.chriszou.remember.TimeHelper;
 
 /**
  * @author zouyong

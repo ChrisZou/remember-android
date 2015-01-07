@@ -8,13 +8,16 @@ package com.chriszou.remember.model;
 import android.text.TextUtils;
 
 import com.chriszou.androidlibs.HttpUtils;
+import com.chriszou.androidlibs.L;
 import com.chriszou.androidlibs.Prefs;
+import com.chriszou.remember.util.UrlLinks;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,25 +29,17 @@ import java.util.List;
  * @author zouyong
  */
 public class TweetModel {
-    final String DEV_SERVER = "10.197.32.129:3000";
-    final String REAL_SERVER = "woaifuxi.com/api/tweets";
-//    final String TWEETS_ROOT = "http://" + DEV_SERVER;
-    final String TWEETS_ROOT = "http://"+ REAL_SERVER;
-
-    final String LISTING_URL_JSON = TWEETS_ROOT + "/tweets_mobile.json";
-    final String TWEET_CREATING_URL = TWEETS_ROOT + "/tweets_mobile";
-
     private static final String PREF_STRING_ETAG = "pref_string_etag";
     private static final String PREF_KEY_STRING_TWEET = "pref_key_string_tweet";
 
     public List<Tweet> allTweets() throws IOException {
-        String authToken = Account.getAuthToken();
-        if (TextUtils.isEmpty(authToken)) {
-            return Collections.EMPTY_LIST;
+        if (Account.currentUser() == null) {
+            return new ArrayList<Tweet>();
         }
 
         if (isUpdated()) {
-            String tweetsJson = HttpUtils.getContent(TWEETS_ROOT + "/?auth_token=" + authToken);
+            String url = UrlLinks.tweetsUrl(Account.currentUser());
+            String tweetsJson = HttpUtils.getContent(url);
             return jsonArrayToTweetList(tweetsJson);
         } else {
             return getCachedTweets();
@@ -74,7 +69,7 @@ public class TweetModel {
      * @return
      */
     private boolean isUpdated() throws IOException {
-        String etag = HttpUtils.getEtag(LISTING_URL_JSON);
+        String etag = HttpUtils.getEtag(UrlLinks.tweetsUrl(null));
         String oldEtag = Prefs.getString(PREF_STRING_ETAG, "");
         if (oldEtag.equals(etag)) {
             return false;
@@ -86,11 +81,11 @@ public class TweetModel {
 
     public List<Tweet> getCachedTweets() {
         String tweetsJson = Prefs.getString(PREF_KEY_STRING_TWEET, null);
-        return tweetsJson==null ? Collections.EMPTY_LIST : jsonArrayToTweetList(tweetsJson);
+        return tweetsJson == null ? Collections.EMPTY_LIST : jsonArrayToTweetList(tweetsJson);
     }
 
     public void addTweet(final Tweet tweet) throws IOException {
-        HttpUtils.postJson(TWEET_CREATING_URL, tweet.toJson());
+        HttpUtils.postJson(UrlLinks.tweetsUrl(Account.currentUser()), tweet.toJson());
     }
 
     /**

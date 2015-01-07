@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.chriszou.androidlibs.TimeHelper;
 import com.chriszou.remember.model.Tweet;
 
 import org.androidannotations.annotations.AfterViews;
