@@ -1,6 +1,5 @@
 package com.chriszou.remember;
 
-import android.app.Fragment;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -13,18 +12,18 @@ import com.chriszou.remember.model.Tweet;
 import com.chriszou.remember.model.TweetModel;
 
 import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
 
 import java.io.IOException;
 import java.util.List;
 
 /**
- * Parent Fragment that shows a list of tweets
- * Created by zouyong on 10/24/14.
+ * Created by Chris on 1/8/15.
  */
-@EFragment
-public abstract class TweetListFragment extends Fragment implements ViewBinder<Tweet> {
+@EActivity
+public abstract class TweetListActivity extends RmbActivity implements ViewBinder<Tweet> {
+
 
     @Background
     public void loadTweets() {
@@ -63,6 +62,4 @@ public abstract class TweetListFragment extends Fragment implements ViewBinder<T
     public void bindView(int position, View view, Tweet item, ViewGroup parent) {
         ((TextView)view).setText(item.getContent());
     }
-
-
 }

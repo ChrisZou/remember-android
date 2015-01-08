@@ -27,17 +27,26 @@ public class SettingsActivity extends RmbActivity{
 
     @AfterViews
     void initViews() {
-        assureLoggedIn();
-        mUsernameView.setText(Account.currentUser().email);
+        if (assureLoggedIn()) {
+            String username = String.format(getString(R.string.current_user_format), Account.currentUser().email);
+            mUsernameView.setText(username);
+        }
     }
 
-    private void assureLoggedIn() {
+    private boolean assureLoggedIn() {
         mUser = Account.currentUser();
         if (mUser == null) {
             Toaster.s(getActivity(), "登陆已失效，请重新登录");
             ActivityNavigator.toLoginActivity(getActivity());
             finish();
+            return false;
         }
+        return true;
+    }
+
+    @Click
+    void settingsReminders() {
+        startActivity(ReminderListActivity.createIntent(getActivity()));
     }
 
     @Click

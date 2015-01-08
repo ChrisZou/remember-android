@@ -12,6 +12,7 @@ import com.chriszou.androidlibs.L;
 import com.chriszou.androidlibs.Prefs;
 import com.chriszou.remember.util.UrlLinks;
 
+import org.apache.http.HttpResponse;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -84,8 +85,13 @@ public class TweetModel {
         return tweetsJson == null ? Collections.EMPTY_LIST : jsonArrayToTweetList(tweetsJson);
     }
 
-    public void addTweet(final Tweet tweet) throws IOException {
-        HttpUtils.postJson(UrlLinks.tweetsUrl(Account.currentUser()), tweet.toJson());
+    public boolean addTweet(final Tweet tweet) throws IOException {
+        HttpResponse response = HttpUtils.postJson(UrlLinks.tweetsUrl(Account.currentUser()), tweet.toJson());
+        int statusCode = response.getStatusLine().getStatusCode();
+        if (statusCode == 200 || statusCode == 201) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -93,5 +99,10 @@ public class TweetModel {
      */
     public void saveCache(String content) {
         Prefs.putString(PREF_KEY_STRING_TWEET, content);
+    }
+
+    public boolean createTweet(String content) throws IOException {
+        Tweet tweet = new Tweet(content);
+        return addTweet(tweet);
     }
 }

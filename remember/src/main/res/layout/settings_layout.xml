@@ -3,23 +3,18 @@
     style="@style/activity_bg"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+    <TextView
+        android:id="@+id/settings_username_view"
+        style="@style/settings_item"
+        android:text="875156226@qq.com"/>
+    <View style="@style/settings_item_divider"/>
+    <TextView
+        android:id="@+id/settings_reminders"
+        style="@style/settings_item"
+        android:text="@string/reminder_list"/>
+    <View style="@style/settings_item_divider"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/current_user_label"/>
-
-        <TextView
-            android:id="@+id/settings_username_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="875156226@qq.com"/>
-    </LinearLayout>
-
+    <View style="@style/vertical_space"/>
     <Button
         android:id="@+id/logout"
         android:layout_width="fill_parent"

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              style="@style/activity_bg">
+    <EditText
+        android:id="@+id/new_tweet_edit"
+        android:layout_width="fill_parent"
+        android:gravity="top|left"
+        android:layout_height="200dp"/>
+
+    <Button
+        android:id="@+id/new_tweet_confirm"
+        style="@style/button_default"
+        android:layout_marginTop="@dimen/padding_default"
+        android:text="@string/btn_create"/>
+</LinearLayout>

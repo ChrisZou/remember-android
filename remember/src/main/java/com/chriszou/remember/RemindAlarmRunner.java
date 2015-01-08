@@ -10,7 +10,7 @@ import android.content.Intent;
 
 import com.chriszou.androidlibs.AlarmHelper;
 import com.chriszou.androidlibs.AlarmRunner;
-import com.chriszou.remember.ReminderFragment.ReminderType;
+import com.chriszou.remember.model.ContentMode;
 import com.chriszou.remember.util.AlarmUtils;
 
 /**
@@ -24,11 +24,10 @@ public class RemindAlarmRunner implements AlarmRunner{
 	 */
 	@Override
 	public void run(Context context, Intent intent) {
-		Intent activityIntent = new Intent(context, MainActivity_.class);
-		activityIntent.putExtra(MainActivity_.EXTRA_BOOL_REMINDER, true);
-		String reminderType = intent.getBundleExtra(AlarmHelper.EXTRA_EXTRA).getString(ReminderFragment.EXTRA_STRING_REMINDER_TYPE,
-				ReminderType.SHUFFLE.name());
-		activityIntent.putExtra(ReminderFragment.EXTRA_STRING_REMINDER_TYPE, reminderType);
+		String reminderType = intent.getBundleExtra(AlarmHelper.EXTRA_EXTRA).getString(ReminderActivity.EXTRA_STRING_REMINDER_TYPE,
+				ContentMode.SHUFFLE.name());
+
+        Intent activityIntent = ReminderActivity.createIntent(context, reminderType);
         activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		context.startActivity(activityIntent);
 

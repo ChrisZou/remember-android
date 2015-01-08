@@ -3,13 +3,17 @@ package com.chriszou.remember;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
+import android.widget.Button;
 import android.widget.EditText;
 
 import com.chriszou.androidlibs.L;
 import com.chriszou.androidlibs.Prefs;
 import com.chriszou.androidlibs.Toaster;
+import com.chriszou.androidlibs.ViewUtils;
 import com.chriszou.remember.model.Account;
+import com.chriszou.remember.util.ActivityNavigator;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
@@ -31,14 +35,31 @@ public class LoginActivity extends RmbActivity{
     @ViewById(R.id.login_password)
     EditText mPasswordEdit;
 
+    @ViewById(R.id.login_button)
+    Button mLoginBtn;
+
+
+
     @AfterViews
     void initViews() {
+        if (Account.loggedIn()) {
+            ActivityNavigator.toMainActivity(getActivity());
+            finish();
+            return;
+        }
+
         String previousEmail = Prefs.getString(PREF_STRING_PREVIOUS_EMAIL, "");
         mEmailEdit.setText(previousEmail);
+
+        updateButtonState();
     }
 
     @AfterTextChange({R.id.login_email, R.id.login_password})
-    void textChanged() {
+    void updateButtonState() {
+        mLoginBtn.setEnabled(false);
+        if (ViewUtils.inputNotEmpty(mEmailEdit)&&ViewUtils.inputNotEmpty(mPasswordEdit)) {
+            mLoginBtn.setEnabled(true);
+        }
 
     }
 
@@ -81,6 +102,7 @@ public class LoginActivity extends RmbActivity{
 
     @UiThread
     void onLoginSucceed() {
+        startActivity(MainActivity.createIntent(getActivity()));
         setResult(RESULT_OK);
         finish();
     }

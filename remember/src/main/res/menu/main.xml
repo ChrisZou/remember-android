@@ -3,9 +3,17 @@
     tools:context="com.chriszou.remember.MainActivity" >
 
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_new"
+        android:icon="@drawable/ic_action_new"
         android:orderInCategory="100"
-        android:showAsAction="never"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_new"/>
+
+    <item
+        android:id="@+id/action_settings"
+        android:icon="@drawable/ic_action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
         android:title="@string/action_settings"/>
 
 </menu>
