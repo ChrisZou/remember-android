@@ -1,39 +1,29 @@
 package com.chriszou.remember;
 
-import android.animation.Animator;
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.chriszou.androidlibs.L;
 import com.chriszou.androidlibs.Toaster;
 import com.chriszou.remember.model.Account;
 import com.chriszou.remember.model.Tweet;
 import com.chriszou.remember.model.TweetModel;
 import com.chriszou.remember.util.ActivityNavigator;
-import com.chriszou.remember.util.AlarmUtils;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
 import java.io.IOException;
-
-import static com.chriszou.androidlibs.L.l;
 
 @EActivity(R.layout.fragment_main)
 @OptionsMenu(R.menu.main)

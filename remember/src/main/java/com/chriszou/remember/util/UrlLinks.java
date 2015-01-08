@@ -1,6 +1,5 @@
 package com.chriszou.remember.util;
 
-import com.chriszou.remember.model.Account;
 import com.chriszou.remember.model.User;
 
 /**

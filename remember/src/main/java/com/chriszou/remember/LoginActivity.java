@@ -1,14 +1,11 @@
 package com.chriszou.remember;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.chriszou.androidlibs.L;
 import com.chriszou.androidlibs.Prefs;
 import com.chriszou.androidlibs.Toaster;
 import com.chriszou.androidlibs.ViewUtils;

@@ -5,10 +5,7 @@
  */
 package com.chriszou.remember.model;
 
-import android.text.TextUtils;
-
 import com.chriszou.androidlibs.HttpUtils;
-import com.chriszou.androidlibs.L;
 import com.chriszou.androidlibs.Prefs;
 import com.chriszou.remember.util.UrlLinks;
 
@@ -18,7 +15,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
