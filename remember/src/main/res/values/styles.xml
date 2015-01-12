@@ -38,6 +38,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:padding">@dimen/padding_default</item>
+        <item name="android:background">@color/activity_bg</item>
     </style>
 
     <style name="button_default">
@@ -65,5 +66,7 @@
         <item name="android:layout_height">0dp</item>
         <item name="android:layout_weight">1</item>
     </style>
+
+
 </resources>
 

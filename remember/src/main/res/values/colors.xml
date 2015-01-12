@@ -2,4 +2,5 @@
 <resources>
     <color name="rmb_light_grey">#dfdfdf</color>
     <color name="rmb_dark_grey">#aaaaaa</color>
+    <color name="activity_bg">#F4F4F4</color>
 </resources>

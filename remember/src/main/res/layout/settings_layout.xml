@@ -13,6 +13,11 @@
         style="@style/settings_item"
         android:text="@string/reminder_list"/>
     <View style="@style/settings_item_divider"/>
+    <TextView
+        style="@style/settings_item"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/about_app"/>
 
     <View style="@style/vertical_space"/>
     <Button

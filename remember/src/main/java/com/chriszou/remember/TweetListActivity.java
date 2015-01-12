@@ -24,6 +24,7 @@ import java.util.List;
 @EActivity
 public abstract class TweetListActivity extends RmbActivity implements ViewBinder<Tweet> {
 
+    private ViewBinderAdapter<Tweet> mAdapter;
 
     @Background
     public void loadTweets() {
@@ -41,14 +42,16 @@ public abstract class TweetListActivity extends RmbActivity implements ViewBinde
             e.printStackTrace();
         }
     }
-
+    protected ViewBinderAdapter<Tweet> getAdapter() {
+        return mAdapter;
+    }
     protected abstract ListView getListView();
 
     @UiThread
     void updateList(List<Tweet> tweets) {
         tweets = preprocessTweets(tweets);
-        ViewBinderAdapter<Tweet> adapter = new ViewBinderAdapter<Tweet>(getActivity(), tweets, R.layout.tweet_item, this);
-        getListView().setAdapter(adapter);
+        mAdapter = new ViewBinderAdapter<Tweet>(getActivity(), tweets, R.layout.tweet_item, this);
+        getListView().setAdapter(mAdapter);
     }
 
     /**

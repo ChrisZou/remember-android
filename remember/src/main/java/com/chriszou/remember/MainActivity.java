@@ -19,6 +19,7 @@ import com.chriszou.remember.util.ActivityNavigator;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
@@ -28,6 +29,7 @@ import java.io.IOException;
 @EActivity(R.layout.fragment_main)
 @OptionsMenu(R.menu.main)
 public class MainActivity extends TweetListActivity {
+    private static final int REQUEST_NEW_TWEET = 1;
     private LocalBroadcastManager mLocalBroadcastManager;
 
     @AfterViews
@@ -35,11 +37,16 @@ public class MainActivity extends TweetListActivity {
         setActionBarHomeUp(false);
         registerLocalBroadcast();
 
-        if (!loggedIn()) {
+        if (!Account.loggedIn()) {
             login();
         } else {
             loadTweets();
         }
+    }
+
+    private void login() {
+        ActivityNavigator.toLoginActivity(getActivity());
+        finish();
     }
 
     private void registerLocalBroadcast() {
@@ -55,38 +62,23 @@ public class MainActivity extends TweetListActivity {
 
     @OptionsItem
     void actionNew() {
-        startActivity(NewTweetActivity.createIntent(getActivity()));
+        startActivityForResult(NewTweetActivity.createIntent(getActivity()), REQUEST_NEW_TWEET);
     }
 
     @ViewById(R.id.main_listview)
     ListView mListView;
 
-    @ViewById(R.id.main_btn_add)
-    Button mAddBtn;
-    @ViewById(R.id.main_add_edit)
-    EditText mAddEdit;
-
-    @Click(R.id.main_btn_add)
-    void onAddClicked() {
-        String text = mAddEdit.getText().toString().trim();
-        if(text.length()==0) {
-            return;
-        }
-
-        addTweet(text);
-    }
-
-    private void addTweet(String text) {
-        try {
-            new TweetModel().addTweet(new Tweet(text));
-        } catch (IOException e) {
-            Toaster.s(getActivity(), "Network connection failed");
-        }
-    }
-
     @Override
     protected ListView getListView() {
         return mListView;
+    }
+
+    @OnActivityResult(REQUEST_NEW_TWEET)
+    void onResult(int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            Tweet tweet = (Tweet) data.getSerializableExtra(NewTweetActivity.EXTRA_SERIAL_TWEET);
+            getAdapter().add(0, tweet);
+        }
     }
 
     private BroadcastReceiver mLogoutReceiver = new BroadcastReceiver() {
@@ -102,16 +94,6 @@ public class MainActivity extends TweetListActivity {
             }
         }
     };
-
-
-    private void login() {
-        ActivityNavigator.toLoginActivity(getActivity());
-        finish();
-    }
-
-    private boolean loggedIn() {
-        return Account.loggedIn();
-    }
 
     @Override
     protected void onDestroy() {

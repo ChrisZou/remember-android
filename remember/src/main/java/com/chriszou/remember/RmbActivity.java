@@ -1,6 +1,7 @@
 package com.chriszou.remember;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -34,4 +35,8 @@ public abstract class RmbActivity extends Activity {
         return this;
     }
 
+    protected void finish(int code, Intent data) {
+        setResult(code, data);
+        finish();
+    }
 }

@@ -4,13 +4,14 @@ import com.google.gson.Gson;
 
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by zouyong on 10/24/14.
  */
-public class Tweet {
+public class Tweet implements Serializable{
     private String content = "";
     private String createdTime = "";
     private String modifiedTime = "";

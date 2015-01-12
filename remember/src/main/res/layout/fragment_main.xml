@@ -3,29 +3,6 @@
     android:layout_height="wrap_content"
     android:orientation="vertical" >
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="80dp"
-        android:focusableInTouchMode="true"
-        android:visibility="gone"
-        android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/main_add_edit"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="fill_parent"
-            android:gravity="top"
-            android:singleLine="false"
-            android:inputType="text" />
-
-        <Button
-            android:id="@+id/main_btn_add"
-            android:layout_width="80dp"
-            android:layout_height="fill_parent"
-            android:text="Add" />
-    </LinearLayout>
-
     <ListView
         android:id="@+id/main_listview"
         android:layout_width="fill_parent"
