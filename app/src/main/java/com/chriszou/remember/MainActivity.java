@@ -15,6 +15,7 @@ import com.chriszou.remember.model.Account;
 import com.chriszou.remember.model.Tweet;
 import com.chriszou.remember.model.TweetModel;
 import com.chriszou.remember.util.ActivityNavigator;
+import com.chriszou.remember.util.AlarmUtils;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -40,6 +41,7 @@ public class MainActivity extends TweetListActivity {
         if (!Account.loggedIn()) {
             login();
         } else {
+            AlarmUtils.setupAlarms(this);
             loadTweets();
         }
     }
