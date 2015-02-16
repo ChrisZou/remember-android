@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    style="@style/activity_bg"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bootstrapbutton="http://schemas.android.com/apk/res-auto">
+
+    <EditText
+        android:id="@+id/register_email"
+        style="@style/email_edit"/>
+
+    <EditText
+        android:id="@+id/register_password"
+        style="@style/password_edit"/>
+
+    <EditText
+        android:id="@+id/register_password_confirm"
+        style="@style/password_edit"
+        android:hint="@string/hint_confirm_password"/>
+
+    <com.beardedhen.androidbootstrap.BootstrapButton
+        android:id="@+id/register"
+        style="@style/button_default"
+        android:text="@string/btn_register"
+        android:layout_marginTop="@dimen/padding_default"
+        bootstrapbutton:bb_roundedCorners="true"
+        bootstrapbutton:bb_type="primary"/>
+
+    <View style="@style/vfiller"/>
+
+    <com.beardedhen.androidbootstrap.BootstrapButton
+        style="@style/button_default"
+        bootstrapbutton:bb_roundedCorners="true"
+        bootstrapbutton:bb_type="primary"
+        android:text="@string/btn_has_account_login"
+        />
+</LinearLayout>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:bootstrapbutton="http://schemas.android.com/apk/res-auto"
+              style="@style/activity_bg">
+    <!--<com.beardedhen.androidbootstrap.BootstrapEditText-->
+    <EditText
+        android:id="@+id/new_tweet_edit"
+        style="@style/edittext_default"
+        android:layout_height="200dp"
+        android:hint="@string/hint_tweet_content"
+        />
+    <com.beardedhen.androidbootstrap.BootstrapButton
+        android:id="@+id/new_tweet_confirm"
+        style="@style/button_default"
+        android:layout_marginTop="@dimen/padding_default"
+        android:text="@string/btn_create"
+        />
+</LinearLayout>

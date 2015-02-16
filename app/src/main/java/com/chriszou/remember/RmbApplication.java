@@ -1,8 +1,8 @@
 package com.chriszou.remember;
 
 import com.activeandroid.ActiveAndroid;
-import com.chriszou.androidlibs.LibsApplication;
 import com.chriszou.androidlibs.Prefs;
+import com.chriszou.androidlibs.UtilApplication;
 import com.chriszou.remember.util.DBUtils;
 
 import org.androidannotations.annotations.Background;
@@ -12,7 +12,7 @@ import org.androidannotations.annotations.EApplication;
  * Created by Chris on 1/7/15.
  */
 @EApplication
-public class RmbApplication extends LibsApplication {
+public class RmbApplication extends UtilApplication {
     private static final String PREF_BOOL_FIRST_INSTALL = "pref_bool_first_install";
 
     @Override

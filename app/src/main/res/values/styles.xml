@@ -4,7 +4,7 @@
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-    <style name="AppBaseTheme" parent="android:Theme.Light">
+    <style name="AppBaseTheme" parent="android:Theme.Holo.Light.DarkActionBar">
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
@@ -15,12 +15,19 @@
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
     </style>
 
-    <style name="login_eidttext">
+    <style name="edittext_default">
         <item name="android:layout_width">fill_parent</item>
+        <item name="android:gravity">top|left</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_margin">10dp</item>
+        <item name="android:background">@drawable/shape_edit_text_bg</item>
+        <item name="android:inputType">text</item>
+    </style>
+
+    <style name="login_eidttext" parent="edittext_default">
+        <item name="android:layout_marginTop">10dp</item>
     </style>
 
     <style name="email_edit" parent="login_eidttext">
@@ -65,6 +72,10 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">0dp</item>
         <item name="android:layout_weight">1</item>
+    </style>
+
+    <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@color/actionbar_bg</item>
     </style>
 
 

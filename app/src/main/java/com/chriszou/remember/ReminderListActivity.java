@@ -56,6 +56,11 @@ public class ReminderListActivity extends RmbActivity implements OnTimePickedLis
 
     private ViewBinder<Reminder> mReminderViewBinder = new ViewBinder<Reminder>() {
         @Override
+        public int getLayoutRes() {
+            return 0;
+        }
+
+        @Override
         public void bindView(int position, View view, Reminder item, ViewGroup parent) {
             TextView textView = (TextView) view;
             textView.setText(item.getReminderTime());

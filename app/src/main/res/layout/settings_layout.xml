@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     style="@style/activity_bg"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bootstrapbutton="http://schemas.android.com/apk/res-auto"
+    >
 
     <TextView
         android:id="@+id/settings_username_view"
         style="@style/settings_item"
         android:text="875156226@qq.com"/>
+
     <View style="@style/settings_item_divider"/>
+
     <TextView
         android:id="@+id/settings_reminders"
         style="@style/settings_item"
         android:text="@string/reminder_list"/>
+
     <View style="@style/settings_item_divider"/>
+
     <TextView
         style="@style/settings_item"
         android:layout_height="wrap_content"
@@ -20,9 +26,11 @@
         android:text="@string/about_app"/>
 
     <View style="@style/vertical_space"/>
-    <Button
+
+    <com.beardedhen.androidbootstrap.BootstrapButton
         android:id="@+id/logout"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/settings_logout"/>
+        style="@style/button_default"
+        android:text="@string/settings_logout"
+        bootstrapbutton:bb_roundedCorners="true"
+        bootstrapbutton:bb_type="primary"/>
 </LinearLayout>

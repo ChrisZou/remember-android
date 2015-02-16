@@ -2,6 +2,7 @@ package com.chriszou.remember;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -35,7 +36,7 @@ public class RegisterActivity extends RmbActivity implements RegisterCallback {
     EditText mPasswordConfirmEdit;
 
     @ViewById(R.id.register)
-    Button mRegisterBtn;
+    View mRegisterBtn;
 
     @AfterTextChange({R.id.register_password_confirm, R.id.register_password, R.id.register_email})
     void updateButtonEnabled() {

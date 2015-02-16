@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:bootstrapbutton="http://schemas.android.com/apk/res-auto"
               style="@style/activity_bg">
 
     <EditText
@@ -13,15 +14,20 @@
         android:hint="Password"
         android:inputType="textPassword"
         style="@style/login_eidttext"/>
-    <Button
+    <com.beardedhen.androidbootstrap.BootstrapButton
         android:id="@+id/login_button"
         style="@style/button_default"
+        android:layout_marginTop="@dimen/padding_default"
+        bootstrapbutton:bb_type="primary"
+        bootstrapbutton:bb_roundedCorners="true"
         android:text="@string/btn_login" />
     <View style="@style/vfiller"/>
 
-    <Button
+    <com.beardedhen.androidbootstrap.BootstrapButton
         android:id="@+id/login_register"
         style="@style/button_default"
+        bootstrapbutton:bb_type="primary"
+        bootstrapbutton:bb_roundedCorners="true"
         android:text="@string/btn_register_account"/>
 
 </LinearLayout>

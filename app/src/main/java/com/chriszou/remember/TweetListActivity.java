@@ -50,7 +50,7 @@ public abstract class TweetListActivity extends RmbActivity implements ViewBinde
     @UiThread
     void updateList(List<Tweet> tweets) {
         tweets = preprocessTweets(tweets);
-        mAdapter = new ViewBinderAdapter<Tweet>(getActivity(), tweets, R.layout.tweet_item, this);
+        mAdapter = new ViewBinderAdapter<Tweet>(getActivity(), tweets, this);
         getListView().setAdapter(mAdapter);
     }
 
@@ -59,6 +59,11 @@ public abstract class TweetListActivity extends RmbActivity implements ViewBinde
      */
     protected List<Tweet> preprocessTweets(List<Tweet> tweets) {
         return tweets;
+    }
+
+    @Override
+    public int getLayoutRes() {
+        return R.layout.tweet_item;
     }
 
     @Override
