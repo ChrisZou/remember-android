@@ -31,11 +31,18 @@ android {
     }
 }
 
+repositories {
+    maven { url 'http://clinker.47deg.com/nexus/content/groups/public' }
+}
+
 dependencies {
     //Add these two lines for androidannotation
     apt "org.androidannotations:androidannotations:3.0.1"
     compile 'org.androidannotations:androidannotations-api:3.0.1'
     compile 'com.beardedhen:androidbootstrap:+'
+    compile ('com.fortysevendeg.swipelistview:swipelistview:1.0-SNAPSHOT@aar') {
+        transitive = true
+    }
     compile 'com.squareup.retrofit:retrofit:1.8.0'
     compile project(':..:androidlibs')
 }

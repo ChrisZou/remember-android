@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:swipe="http://schemas.android.com/apk/res-auto"
               style="@style/activity_bg">
 
     <TextView
@@ -8,8 +9,18 @@
         android:textSize="16sp"
         android:padding="10dp"
         android:text="@string/reminder_list_explain"/>
-    <ListView
+
+
+    <com.fortysevendeg.swipelistview.SwipeListView
         android:id="@+id/listview"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"/>
+        android:layout_height="fill_parent"
+        swipe:swipeFrontView="@+id/reminder_item_time"
+        swipe:swipeBackView="@+id/back"
+        swipe:swipeActionLeft="reveal"
+        swipe:swipeMode="left"
+        swipe:swipeCloseAllItemsWhenMoveList="true"
+        swipe:swipeOpenOnLongPress="true"
+        swipe:swipeOffsetLeft="200dp"
+        swipe:swipeOffsetRight="200dp"/>
 </LinearLayout>

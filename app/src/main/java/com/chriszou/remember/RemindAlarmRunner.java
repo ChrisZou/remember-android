@@ -11,7 +11,7 @@ import android.content.Intent;
 import com.chriszou.androidlibs.AlarmHelper;
 import com.chriszou.androidlibs.AlarmRunner;
 import com.chriszou.remember.model.ContentMode;
-import com.chriszou.remember.util.AlarmUtils;
+import com.chriszou.remember.util.ReminderAlarmHelper;
 
 /**
  * @author zouyong
@@ -31,7 +31,7 @@ public class RemindAlarmRunner implements AlarmRunner{
         activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		context.startActivity(activityIntent);
 
-		AlarmUtils.setupAlarms(context);
+		ReminderAlarmHelper.setupAlarms(context);
 	}
 
 }

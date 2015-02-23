@@ -78,6 +78,16 @@
         <item name="android:background">@color/actionbar_bg</item>
     </style>
 
+    <style name="horizontal_space">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+    </style>
 
+    <style name="reminder_back_item">
+        <item name="android:layout_width">80dp</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:scaleType">centerInside</item>
+    </style>
 </resources>
 
