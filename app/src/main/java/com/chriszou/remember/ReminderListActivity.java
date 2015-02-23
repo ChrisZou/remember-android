@@ -111,11 +111,11 @@ public class ReminderListActivity extends RmbActivity implements OnTimePickedLis
             mAdapter.add(reminder);
         } else {
             reminder.time = time;
+            reminder.save();
             mAdapter.notifyDataSetChanged();
         }
         ReminderAlarmHelper.setupAlarm(getActivity(), reminder);
     }
-
 
     public static Intent createIntent(Activity activity) {
         Intent intent = new Intent(activity, ReminderListActivity_.class);

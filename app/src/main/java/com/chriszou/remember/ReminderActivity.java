@@ -57,36 +57,7 @@ public class ReminderActivity extends TweetListActivity {
      */
     private List<Tweet> getShowList(List<Tweet> items) {
         ContentMode mode = ContentMode.valueOf(mReminderType);
-        List<Tweet>result = null;
-        switch (mode){
-        case SHUFFLE:
-            result = items;
-            Collections.shuffle(result, new Random(System.nanoTime()));
-            break;
-        case TODAY:
-            result = getTodayTweets(items);
-            break;
-        }
-
-        return result;
-    }
-
-    /**
-     * Get the tweets that was created today
-     *
-     * @param items
-     * @return
-     */
-    private List<Tweet> getTodayTweets(List<Tweet> items) {
-        List<Tweet> result = new ArrayList<Tweet>();
-        String todayString = TimeHelper.getTodayString();
-        for (Tweet item : items) {
-            String createdTime = item.getContent();
-            if (createdTime.startsWith(todayString)) {
-                result.add(item);
-            }
-        }
-        return result;
+        return mode.getTweets(items);
     }
 
     @Override
