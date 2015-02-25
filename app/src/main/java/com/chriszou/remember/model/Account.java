@@ -2,7 +2,7 @@ package com.chriszou.remember.model;
 
 import com.chriszou.androidlibs.HttpUtils;
 import com.chriszou.androidlibs.Prefs;
-import com.chriszou.remember.util.UrlLinks;
+import com.chriszou.remember.util.Links;
 import com.google.gson.Gson;
 
 import org.apache.http.Header;
@@ -49,7 +49,7 @@ public class Account {
             List<Header> headers = new ArrayList<Header>();
             headers.add(new BasicHeader(HttpUtils.HEADER_CONTENT_TYPE, HttpUtils.CONTENT_TYPE_JSON));
 
-            HttpResponse response = HttpUtils.postJson(UrlLinks.LOGIN_URL, userObj.toString(), headers);
+            HttpResponse response = HttpUtils.postJson(Links.LOGIN_URL, userObj.toString(), headers);
 
             String responseString = HttpUtils.responseToString(response);
             if (response.getStatusLine().getStatusCode() == 201) {
@@ -73,7 +73,7 @@ public class Account {
             List<Header> headers = new ArrayList<Header>();
             headers.add(new BasicHeader(HttpUtils.HEADER_CONTENT_TYPE, HttpUtils.CONTENT_TYPE_JSON));
 
-            HttpResponse response = HttpUtils.postJson(UrlLinks.SIGNUP_URL, json, headers);
+            HttpResponse response = HttpUtils.postJson(Links.SIGNUP_URL, json, headers);
 
             String responseString = HttpUtils.responseToString(response);
             int statusCode = response.getStatusLine().getStatusCode();

@@ -1,5 +1,8 @@
 package com.chriszou.remember;
 
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
+
 import com.activeandroid.ActiveAndroid;
 import com.chriszou.androidlibs.Prefs;
 import com.chriszou.androidlibs.UtilApplication;
@@ -31,5 +34,15 @@ public class RmbApplication extends UtilApplication {
             Prefs.putBoolean(PREF_BOOL_FIRST_INSTALL, false);
         }
 
+    }
+
+    public static String getVersionName() {
+        try {
+            PackageInfo pInfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0);
+            return pInfo.versionName;
+        } catch (NameNotFoundException e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 }

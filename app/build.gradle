@@ -44,6 +44,8 @@ dependencies {
         transitive = true
     }
     compile 'com.squareup.retrofit:retrofit:1.8.0'
+    compile 'com.mcxiaoke.volley:library:1.0.+'
+    compile 'com.squareup.okhttp:okhttp:2.2.0'
     compile project(':..:androidlibs')
 }
 

@@ -11,9 +11,11 @@ import android.widget.ListView;
 import com.chriszou.remember.model.Account;
 import com.chriszou.remember.model.Tweet;
 import com.chriszou.remember.util.ActivityNavigator;
+import com.chriszou.remember.util.AppUpgrader;
 import com.chriszou.remember.util.ReminderAlarmHelper;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.OptionsItem;
@@ -34,9 +36,15 @@ public class MainActivity extends TweetListActivity {
         if (!Account.loggedIn()) {
             login();
         } else {
+            checkUpgrade();
             ReminderAlarmHelper.setupAlarms(this);
-            loadTweets();
+//            loadTweets();
         }
+    }
+
+    @Background
+    void checkUpgrade() {
+        AppUpgrader.checkUpgrade(getActivity());
     }
 
     private void login() {

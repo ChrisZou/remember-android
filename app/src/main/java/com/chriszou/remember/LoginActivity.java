@@ -36,8 +36,6 @@ public class LoginActivity extends RmbActivity{
     @ViewById(R.id.login_button)
     View mLoginBtn;
 
-
-
     @AfterViews
     void initViews() {
         if (Account.loggedIn()) {

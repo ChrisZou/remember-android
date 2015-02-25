@@ -7,7 +7,7 @@ package com.chriszou.remember.model;
 
 import com.chriszou.androidlibs.HttpUtils;
 import com.chriszou.androidlibs.Prefs;
-import com.chriszou.remember.util.UrlLinks;
+import com.chriszou.remember.util.Links;
 
 import org.apache.http.HttpResponse;
 import org.json.JSONArray;
@@ -35,7 +35,7 @@ public class TweetModel {
         }
 
         if (isUpdated()) {
-            String url = UrlLinks.tweetsUrl(Account.currentUser());
+            String url = Links.tweetsUrl(Account.currentUser());
             String tweetsJson = HttpUtils.getContent(url);
             return jsonArrayToTweetList(tweetsJson);
         } else {
@@ -66,7 +66,7 @@ public class TweetModel {
      * @return
      */
     private boolean isUpdated() throws IOException {
-        String etag = HttpUtils.getEtag(UrlLinks.tweetsUrl(null));
+        String etag = HttpUtils.getEtag(Links.tweetsUrl(null));
         String oldEtag = Prefs.getString(PREF_STRING_ETAG, "");
         if (oldEtag.equals(etag)) {
             return false;
@@ -82,7 +82,7 @@ public class TweetModel {
     }
 
     public boolean addTweet(final Tweet tweet) throws IOException {
-        HttpResponse response = HttpUtils.postJson(UrlLinks.tweetsUrl(Account.currentUser()), tweet.toJson());
+        HttpResponse response = HttpUtils.postJson(Links.tweetsUrl(Account.currentUser()), tweet.toJson());
         int statusCode = response.getStatusLine().getStatusCode();
         if (statusCode == 200 || statusCode == 201) {
             return true;
