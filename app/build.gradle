@@ -40,6 +40,7 @@ dependencies {
     apt "org.androidannotations:androidannotations:3.0.1"
     compile 'org.androidannotations:androidannotations-api:3.0.1'
     compile 'com.beardedhen:androidbootstrap:+'
+    compile 'com.umeng.analytics:analytics:latest.integration'
     compile ('com.fortysevendeg.swipelistview:swipelistview:1.0-SNAPSHOT@aar') {
         transitive = true
     }

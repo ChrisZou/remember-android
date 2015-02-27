@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import com.umeng.analytics.MobclickAgent;
+
 /**
  * Parent activity for all the activities in this application
  * Created by Chris on 1/2/15.
@@ -21,6 +23,18 @@ public abstract class RmbActivity extends Activity {
             getActionBar().setDisplayHomeAsUpEnabled(homeAsUp);
             getActionBar().setHomeButtonEnabled(homeAsUp);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 
     @Override
