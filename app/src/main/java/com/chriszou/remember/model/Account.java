@@ -1,8 +1,14 @@
 package com.chriszou.remember.model;
 
 import com.chriszou.androidlibs.HttpUtils;
+import com.chriszou.androidlibs.L;
 import com.chriszou.androidlibs.Prefs;
+import com.chriszou.remember.util.ErrorResponse;
 import com.chriszou.remember.util.Links;
+import com.chriszou.remember.util.NetworkCallback;
+import com.chriszou.remember.util.NetworkRequest;
+import com.chriszou.remember.util.NetworkResponse;
+import com.chriszou.remember.util.VolleyListener;
 import com.google.gson.Gson;
 
 import org.apache.http.Header;
@@ -12,6 +18,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.chriszou.androidlibs.L.l;
 
 /**
  * Created by zouyong on 10/20/14.
@@ -26,9 +34,8 @@ public class Account {
         return currentUser()!=null;
     }
 
-    private static void saveUser(String userString) {
-        validateUserJson(userString);
-        Prefs.putString(PREF_STRING_USER, userString);
+    private static void saveUser(User user) {
+        Prefs.putString(PREF_STRING_USER, GsonUtils.toJson(user));
     }
 
     private static void validateUserJson(String userString) {
@@ -39,54 +46,68 @@ public class Account {
         Prefs.remove(PREF_STRING_USER);
     }
 
-    public static void login(String email, String password, LoginCallback callback) {
+    public static void login(String email, String password, final NetworkCallback callback) {
         try {
-            // add the user email and password to the params
-            JSONObject userObj = new JSONObject();
-            userObj.put("email", email);
-            userObj.put("password", password);
+            JSONObject data = new JSONObject();
+            data.put("email", email);
+            data.put("password", password);
+            NetworkRequest.post(Links.LOGIN_URL, data, new VolleyListener() {
+                @Override
+                protected void handleError(ErrorResponse errorResponse) {
+                    try {
+                        l("error msg: %s", errorResponse.errorMsg);
+                        callback.onRequestCompleted(false, errorResponse);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
 
-            List<Header> headers = new ArrayList<Header>();
-            headers.add(new BasicHeader(HttpUtils.HEADER_CONTENT_TYPE, HttpUtils.CONTENT_TYPE_JSON));
+                @Override
+                protected void handleResponse(NetworkResponse networkResponse) {
+                    try {
+                        User user = GsonUtils.fromJson(networkResponse.data, User.class);
+                        saveUser(user);
+                        callback.onRequestCompleted(true, networkResponse);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
-            HttpResponse response = HttpUtils.postJson(Links.LOGIN_URL, userObj.toString(), headers);
-
-            String responseString = HttpUtils.responseToString(response);
-            if (response.getStatusLine().getStatusCode() == 201) {
-                saveUser(responseString);
-                callback.onLoginResult(true, null);
-            } else {
-                JSONObject json = new JSONObject(responseString);
-                callback.onLoginResult(false, json.optString("error_msg"));
-            }
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
-            callback.onLoginResult(false, e.getMessage());
+            callback.onRequestCompleted(false, null);
         }
     }
 
-    public static void register(User user, RegisterCallback callback) {
+    public static void register(User user, final NetworkCallback callback) {
         try {
-            // add the user email and password to the params
             String json = new Gson().toJson(user);
+            NetworkRequest.post(Links.SIGNUP_URL, new JSONObject(json), new VolleyListener() {
+                @Override
+                protected void handleError(ErrorResponse errorResponse) {
+                    try {
+                        l("error msg: %s", errorResponse.errorMsg);
+                        callback.onRequestCompleted(false, errorResponse);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
 
-            List<Header> headers = new ArrayList<Header>();
-            headers.add(new BasicHeader(HttpUtils.HEADER_CONTENT_TYPE, HttpUtils.CONTENT_TYPE_JSON));
-
-            HttpResponse response = HttpUtils.postJson(Links.SIGNUP_URL, json, headers);
-
-            String responseString = HttpUtils.responseToString(response);
-            int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode == 201 || statusCode == 200) {
-                saveUser(responseString);
-                callback.onRegisterResult(true, null);
-            } else {
-                JSONObject responseJson = new JSONObject(responseString);
-                callback.onRegisterResult(false, responseJson.optString("error_msg"));
-            }
+                @Override
+                protected void handleResponse(NetworkResponse networkResponse) {
+                    try {
+                        User user = GsonUtils.fromJson(networkResponse.data, User.class);
+                        saveUser(user);
+                        callback.onRequestCompleted(true, networkResponse);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
-            callback.onRegisterResult(false, e.getMessage());
+            callback.onRequestCompleted(false, null);
         }
     }
 
@@ -103,13 +124,5 @@ public class Account {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public static interface LoginCallback {
-        public void onLoginResult(boolean succeed, String errorMsg);
-    }
-
-    public static interface RegisterCallback {
-        public void onRegisterResult(boolean succeed, String errorMsg);
     }
 }

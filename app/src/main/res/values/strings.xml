@@ -24,6 +24,7 @@
     <string name="reminder_list_explain">这里的闹钟每天都会提醒你复习哦</string>
     <string name="about_app">我爱复习Android 1.0，本软件在持续的开发中，希望能帮助你更好地记住学过的东西。有任何意见或建议欢迎加微信 875156226 进行反馈。如果觉得不错，记得分享给你的小伙伴哦！^_^ \n--我爱复习程序员GEGE</string>
     <string name="hint_tweet_content">输入笔记内容</string>
+    <string name="unknown_error">未知错误</string>
     <!--<string name="reminder_list_explain">这里的闹钟每天都会提醒你复习哦，长按可以删除某一个闹钟</string>-->
 </resources>
 

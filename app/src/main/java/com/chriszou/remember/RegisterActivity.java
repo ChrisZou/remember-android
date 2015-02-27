@@ -9,8 +9,10 @@ import android.widget.EditText;
 import com.chriszou.androidlibs.Toaster;
 import com.chriszou.androidlibs.ViewUtils;
 import com.chriszou.remember.model.Account;
-import com.chriszou.remember.model.Account.RegisterCallback;
 import com.chriszou.remember.model.User;
+import com.chriszou.remember.util.ErrorResponse;
+import com.chriszou.remember.util.NetworkCallback;
+import com.chriszou.remember.util.NetworkResponse;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.Background;
@@ -26,7 +28,7 @@ import java.util.regex.Pattern;
  * Created by Chris on 1/2/15.
  */
 @EActivity(R.layout.register_activity)
-public class RegisterActivity extends RmbActivity implements RegisterCallback {
+public class RegisterActivity extends RmbActivity implements NetworkCallback {
     @ViewById(R.id.register_email)
     EditText mEmailEdit;
 
@@ -69,7 +71,6 @@ public class RegisterActivity extends RmbActivity implements RegisterCallback {
         performRegister(user);
     }
 
-    @Background
     void performRegister(User user) {
         Account.register(user, this);
     }
@@ -78,18 +79,23 @@ public class RegisterActivity extends RmbActivity implements RegisterCallback {
         return new Intent(activity, RegisterActivity_.class);
     }
 
-    @Override
-    public void onRegisterResult(boolean succeed, String errorMsg) {
-        if (succeed) {
-            onRegisterSucceed();
-        } else {
-            Toaster.s(getActivity(), errorMsg);
-        }
-    }
-
     @UiThread
     void onRegisterSucceed() {
         startActivity(MainActivity.createIntent(getActivity()));
         finish();
+    }
+
+    @Override
+    public void onRequestCompleted(boolean success, NetworkResponse response) {
+        if (success) {
+            onRegisterSucceed();
+        } else {
+            String msg = getString(R.string.unknown_error);
+            if (response != null && response instanceof ErrorResponse) {
+                msg = ((ErrorResponse) response).errorMsg;
+            }
+
+            Toaster.s(getActivity(), msg);
+        }
     }
 }

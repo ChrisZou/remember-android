@@ -46,8 +46,7 @@ public class TweetModel {
     private List<Tweet> jsonArrayToTweetList(String tweetsJson) {
         List<Tweet> results = new ArrayList<Tweet>();
         try {
-            JSONArray array = null;
-            array = new JSONArray(tweetsJson);
+            JSONArray array = new JSONObject(tweetsJson).optJSONArray("data");
             for (int i = 0; i < array.length(); i++) {
                 JSONObject object = array.optJSONObject(i);
                 Tweet t = Tweet.fromJson(object);

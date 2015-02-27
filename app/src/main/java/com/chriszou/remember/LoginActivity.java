@@ -12,6 +12,9 @@ import com.chriszou.androidlibs.Toaster;
 import com.chriszou.androidlibs.ViewUtils;
 import com.chriszou.remember.model.Account;
 import com.chriszou.remember.util.ActivityNavigator;
+import com.chriszou.remember.util.ErrorResponse;
+import com.chriszou.remember.util.NetworkCallback;
+import com.chriszou.remember.util.NetworkResponse;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
@@ -25,7 +28,7 @@ import org.androidannotations.annotations.ViewById;
  * Created by zouyong on 10/20/14.
  */
 @EActivity(R.layout.login_activity)
-public class LoginActivity extends RmbActivity{
+public class LoginActivity extends RmbActivity implements NetworkCallback{
     private static final String PREF_STRING_PREVIOUS_EMAIL = "pref_string_previous_email";
 
     @ViewById(R.id.login_email)
@@ -77,18 +80,8 @@ public class LoginActivity extends RmbActivity{
         startActivity(RegisterActivity.createIntent(getActivity()));
     }
 
-    @Background
     void performLogin(String email, String password) {
-        Account.login(email, password, new Account.LoginCallback() {
-            @Override
-            public void onLoginResult(boolean succeed, String errorMsg) {
-                if (succeed) {
-                    onLoginSucceed();
-                } else {
-                    onLoginFailed(errorMsg);
-                }
-            }
-        });
+        Account.login(email, password, this);
     }
 
     @UiThread
@@ -105,5 +98,19 @@ public class LoginActivity extends RmbActivity{
 
     public static Intent createIntent(Activity activity) {
         return new Intent(activity, LoginActivity_.class);
+    }
+
+    @Override
+    public void onRequestCompleted(boolean success, NetworkResponse response) {
+        if (success) {
+            onLoginSucceed();
+        } else {
+            String msg = getString(R.string.unknown_error);
+            if (response != null && response instanceof ErrorResponse) {
+                msg = ((ErrorResponse) response).errorMsg;
+            }
+
+            Toaster.s(getActivity(), msg);
+        }
     }
 }

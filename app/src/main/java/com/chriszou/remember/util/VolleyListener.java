@@ -12,9 +12,20 @@ import org.json.JSONObject;
  */
 public abstract class VolleyListener implements Listener<JSONObject>, ErrorListener {
     @Override
-    public void onErrorResponse(VolleyError error) {
-        L.l("error: " + error);
+    public final void onErrorResponse(VolleyError error) {
+        try {
+            L.l("Get error: "+error);
+            error.printStackTrace();
+            String data = new String(error.networkResponse.data);
+            ErrorResponse errorResponse = new ErrorResponse(new JSONObject(data));
+            handleError(errorResponse);
+        } catch (Exception e) {
+            e.printStackTrace();
+            handleError(null);
+        }
     }
+
+    protected abstract void handleError(ErrorResponse errorResponse);
 
     @Override
     public final void onResponse(JSONObject response) {

@@ -36,6 +36,12 @@ public class NetworkRequest extends JsonObjectRequest{
         request.execute();
     }
 
+    public static void post(String url, JSONObject data, VolleyListener listener) {
+        NetworkRequest request = new NetworkRequest(Method.POST, url, data, listener, listener);
+        request.execute();
+    }
+
+
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
         Map<String, String> headers = super.getHeaders();

@@ -38,7 +38,7 @@ public class MainActivity extends TweetListActivity {
         } else {
             checkUpgrade();
             ReminderAlarmHelper.setupAlarms(this);
-//            loadTweets();
+            loadTweets();
         }
     }
 
