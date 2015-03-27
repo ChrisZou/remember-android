@@ -8,16 +8,10 @@ import android.os.Environment;
 
 import com.chriszou.androidlibs.Downloader;
 import com.chriszou.androidlibs.Downloader.OnDownloadCompleteListener;
-import com.chriszou.androidlibs.L;
 import com.chriszou.androidlibs.UtilApplication;
-import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -92,14 +86,16 @@ public class AppUpgrader {
     }
 
     private static ServerApp getServerVersion() throws IOException, JSONException {
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder().url(Links.ANDROID_VERSION_URL).build();
-        Response response = client.newCall(request).execute();
-        String jsonString = response.body().string();
-        JSONObject data = new JSONObject(jsonString).optJSONObject("data");
-        ServerApp app = new Gson().fromJson(data.toString(), ServerApp.class);
-        return app;
+//        OkHttpClient client = new OkHttpClient();
+//        Request request = new Request.Builder().url(Links.ANDROID_VERSION_URL).build();
+//        Response response = client.newCall(request).execute();
+//        String jsonString = response.body().string();
+//        JSONObject data = new JSONObject(jsonString).optJSONObject("data");
+//        ServerApp app = new Gson().fromJson(data.toString(), ServerApp.class);
+//        return app;
+        return null;
     }
+
 
     class ServerApp {
         public String version;

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              style="@style/activity_bg">
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/avatar_view"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
+        android:src="@drawable/ic_launcher"
+        android:layout_gravity="center_horizontal"
+        app:border_width="2dp"
+        app:border_color="#FFFFFF"/>
+    <View style="@style/settings_item_divider"/>
+    <LinearLayout
+        style="@style/settings_item"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="@string/text_login_email"/>
+        <TextView
+            android:id="@+id/email_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:text="@string/text_test"/>
+    </LinearLayout>
+    <View style="@style/settings_item_divider"/>
+    <LinearLayout
+        android:id="@+id/username_layout"
+        style="@style/settings_item"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="@string/text_nickname"/>
+        <EditText
+            android:id="@+id/username_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:textSize="14sp"
+            android:maxLength="10"
+            android:singleLine="true"
+            android:text="@string/text_test"/>
+    </LinearLayout>
+    <View style="@style/settings_item_divider"/>
+</LinearLayout>

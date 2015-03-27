@@ -29,13 +29,21 @@ public class TweetModel {
     private static final String PREF_STRING_ETAG = "pref_string_etag";
     private static final String PREF_KEY_STRING_TWEET = "pref_key_string_tweet";
 
+    private static TweetModel sTweetModel = new TweetModel();
+
+    private TweetModel() {}
+
+    public static TweetModel getInstance() {
+        return sTweetModel;
+    }
+
     public List<Tweet> allTweets() throws IOException {
-        if (Account.currentUser() == null) {
+        if (UserModel.currentUser() == null) {
             return new ArrayList<Tweet>();
         }
 
         if (isUpdated()) {
-            String url = Links.tweetsUrl(Account.currentUser());
+            String url = Links.tweetsUrl(UserModel.currentUser());
             String tweetsJson = HttpUtils.getContent(url);
             return jsonArrayToTweetList(tweetsJson);
         } else {
@@ -81,7 +89,7 @@ public class TweetModel {
     }
 
     public boolean addTweet(final Tweet tweet) throws IOException {
-        HttpResponse response = HttpUtils.postJson(Links.tweetsUrl(Account.currentUser()), tweet.toJson());
+        HttpResponse response = HttpUtils.postJson(Links.tweetsUrl(UserModel.currentUser()), tweet.toJson());
         int statusCode = response.getStatusLine().getStatusCode();
         if (statusCode == 200 || statusCode == 201) {
             return true;

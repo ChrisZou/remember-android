@@ -6,14 +6,19 @@ import com.chriszou.remember.model.User;
  * Created by Chris on 1/7/15.
  */
 public final class Links {
-    private static final Server SERVER = Server.PRODUCTION;
+    public static final String HOST = "http://www.woaifuxi.com";
+    public static final Server SERVER = Server.PRODUCTION;
     private static final String TWEETS_PATH = "/tweets";
     public static final String LOGIN_URL = SERVER.getServerRoot()+"/login";
     public static final String SIGNUP_URL = SERVER.getServerRoot()+"/signup";
     public static final String ANDROID_VERSION_URL = SERVER.getServerRoot()+"/app/android";
     public static final String ANDROID_DOWNLOAD = SERVER.getServerRoot()+"/download/android";
 
-    enum Server {
+    public static String userAvatar(User user) {
+        return HOST+user.avatarUrl;
+    }
+
+    public static enum Server {
         LOCAL("http://192.168.31.240"), PRODUCTION("http://woaifuxi.com/api");
         private String serverRoot;
         public String getServerRoot() {

@@ -2,13 +2,41 @@
 <LinearLayout
     style="@style/activity_bg"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:bootstrapbutton="http://schemas.android.com/apk/res-auto"
-    >
+    xmlns:bootstrapbutton="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:id="@+id/settings_username_view"
-        style="@style/settings_item"
-        android:text="875156226@qq.com"/>
+    <RelativeLayout
+        android:id="@+id/account_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+        <de.hdodenhof.circleimageview.CircleImageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/avatar_view"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/ic_launcher"
+            app:border_width="2dp"
+            app:border_color="#FFFFFF"/>
+        <TextView
+            android:id="@+id/username_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/avatar_view"
+            android:layout_marginTop="15dp"
+            android:textSize="16sp"
+            android:text="用户名"/>
+
+        <TextView
+            android:id="@+id/note_count_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/avatar_view"
+            android:layout_below="@id/username_view"
+            android:text="0"/>
+    </RelativeLayout>
+
 
     <View style="@style/settings_item_divider"/>
 
@@ -23,6 +51,7 @@
         style="@style/settings_item"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:textSize="14sp"
         android:text="@string/about_app"/>
 
     <View style="@style/vertical_space"/>

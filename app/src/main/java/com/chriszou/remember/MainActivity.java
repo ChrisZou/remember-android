@@ -8,10 +8,9 @@ import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.ListView;
 
-import com.chriszou.remember.model.Account;
 import com.chriszou.remember.model.Tweet;
+import com.chriszou.remember.model.UserModel;
 import com.chriszou.remember.util.ActivityNavigator;
-import com.chriszou.remember.util.AppUpgrader;
 import com.chriszou.remember.util.ReminderAlarmHelper;
 
 import org.androidannotations.annotations.AfterViews;
@@ -33,18 +32,19 @@ public class MainActivity extends TweetListActivity {
         setActionBarHomeUp(false);
         registerLocalBroadcast();
 
-        if (!Account.loggedIn()) {
+        if (!UserModel.loggedIn()) {
             login();
         } else {
             checkUpgrade();
             ReminderAlarmHelper.setupAlarms(this);
             loadTweets();
         }
+
     }
 
     @Background
     void checkUpgrade() {
-        AppUpgrader.checkUpgrade(getActivity());
+//        AppUpgrader.checkUpgrade(getActivity());
     }
 
     private void login() {
@@ -54,7 +54,7 @@ public class MainActivity extends TweetListActivity {
 
     private void registerLocalBroadcast() {
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
-        IntentFilter intentFilter = new IntentFilter(Account.BROADCAST_LOGOUT);
+        IntentFilter intentFilter = new IntentFilter(UserModel.BROADCAST_LOGOUT);
         mLocalBroadcastManager.registerReceiver(mLogoutReceiver, intentFilter);
     }
 
@@ -89,7 +89,7 @@ public class MainActivity extends TweetListActivity {
         public void onReceive(Context context, Intent intent) {
             if (intent != null && intent.getAction()!=null) {
                 String action = intent.getAction();
-                if (action.equals(Account.BROADCAST_LOGOUT)) {
+                if (action.equals(UserModel.BROADCAST_LOGOUT)) {
                     if (getActivity() != null) {
                         getActivity().finish();
                     }

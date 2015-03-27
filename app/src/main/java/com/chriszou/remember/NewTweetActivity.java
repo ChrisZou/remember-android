@@ -3,10 +3,8 @@ package com.chriszou.remember;
 import android.app.Activity;
 import android.content.Intent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
-import com.chriszou.androidlibs.L;
 import com.chriszou.androidlibs.Toaster;
 import com.chriszou.androidlibs.ViewUtils;
 import com.chriszou.remember.model.Tweet;
@@ -21,8 +19,6 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.io.IOException;
-
-import static com.chriszou.androidlibs.L.l;
 
 /**
  * Created by Chris on 1/8/15.
@@ -51,7 +47,7 @@ public class NewTweetActivity extends RmbActivity {
     void performCreate(String content) {
         Tweet tweet = new Tweet(content);
         try {
-            boolean result = new TweetModel().addTweet(tweet);
+            boolean result = TweetModel.getInstance().addTweet(tweet);
             onCreateResult(result, tweet);
         } catch (IOException e) {
             e.printStackTrace();

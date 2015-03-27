@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import com.chriszou.androidlibs.Toaster;
 import com.umeng.analytics.MobclickAgent;
 
 /**
@@ -52,5 +53,13 @@ public abstract class RmbActivity extends Activity {
     protected void finish(int code, Intent data) {
         setResult(code, data);
         finish();
+    }
+
+    public void onError(Throwable e) {
+        toast(e==null ? getString(R.string.unknown_error) : e.getMessage());
+    }
+
+    public void toast(String message) {
+        Toaster.s(getActivity(), message);
     }
 }

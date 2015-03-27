@@ -3,22 +3,16 @@ package com.chriszou.remember;
 import android.app.Activity;
 import android.content.Intent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
 import com.chriszou.androidlibs.Toaster;
 import com.chriszou.androidlibs.ViewUtils;
-import com.chriszou.remember.model.Account;
 import com.chriszou.remember.model.User;
-import com.chriszou.remember.util.ErrorResponse;
-import com.chriszou.remember.util.NetworkCallback;
-import com.chriszou.remember.util.NetworkResponse;
+import com.chriszou.remember.model.UserModel;
 
 import org.androidannotations.annotations.AfterTextChange;
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.regex.Matcher;
@@ -28,7 +22,7 @@ import java.util.regex.Pattern;
  * Created by Chris on 1/2/15.
  */
 @EActivity(R.layout.register_activity)
-public class RegisterActivity extends RmbActivity implements NetworkCallback {
+public class RegisterActivity extends RmbActivity {
     @ViewById(R.id.register_email)
     EditText mEmailEdit;
 
@@ -72,30 +66,16 @@ public class RegisterActivity extends RmbActivity implements NetworkCallback {
     }
 
     void performRegister(User user) {
-        Account.register(user, this);
+        UserModel.register(user).subscribe(this::onRegisterSucceed, this::onError);
     }
 
     public static Intent createIntent(Activity activity) {
         return new Intent(activity, RegisterActivity_.class);
     }
 
-    @UiThread
-    void onRegisterSucceed() {
+    void onRegisterSucceed(User user) {
+        UserModel.saveUser(user);
         startActivity(MainActivity.createIntent(getActivity()));
         finish();
-    }
-
-    @Override
-    public void onRequestCompleted(boolean success, NetworkResponse response) {
-        if (success) {
-            onRegisterSucceed();
-        } else {
-            String msg = getString(R.string.unknown_error);
-            if (response != null && response instanceof ErrorResponse) {
-                msg = ((ErrorResponse) response).errorMsg;
-            }
-
-            Toaster.s(getActivity(), msg);
-        }
     }
 }

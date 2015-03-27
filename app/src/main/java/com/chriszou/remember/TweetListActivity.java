@@ -31,11 +31,10 @@ public abstract class TweetListActivity extends RmbActivity implements ViewBinde
         /*
 		 * First load cache, then load from network.
 		 */
-        TweetModel model = new TweetModel();
-        List<Tweet> tweets = model.getCachedTweets();
+        List<Tweet> tweets = TweetModel.getInstance().getCachedTweets();
         updateList(tweets);
         try {
-            tweets = model.allTweets();
+            tweets = TweetModel.getInstance().allTweets();
             updateList(tweets);
         } catch (IOException e) {
             Toaster.s(getActivity(), "Network connection failed");

@@ -22,9 +22,13 @@
     <string name="create_succeed">创建成功</string>
     <string name="create_failed">创建失败</string>
     <string name="reminder_list_explain">这里的闹钟每天都会提醒你复习哦</string>
-    <string name="about_app">我爱复习Android 1.0，本软件在持续的开发中，希望能帮助你更好地记住学过的东西。有任何意见或建议欢迎加微信 875156226 进行反馈。如果觉得不错，记得分享给你的小伙伴哦！^_^ \n--我爱复习程序员GEGE</string>
+    <string name="about_app"> 我爱复习是一款帮助你学习，复习，积累知识的强大工具。\n\n"不积跬步无以至千里"\n子也曾经曰过："学而时习之不亦悦乎"\n。。。。。。\n\n你可以随手记下来任何知识碎片，再设置一个提醒，系统会帮你随机抽出一部分来复习，你也可以自由地复习任何笔记。如果在使用过程中你有任何的需求或者发现任何问题，你可以通过如下方式找到我们：\n联系邮箱：waitress@woaifuxi.com</string>
     <string name="hint_tweet_content">输入笔记内容</string>
     <string name="unknown_error">未知错误</string>
+    <string name="image_description">This is an image</string>
+    <string name="text_test">TestText</string>
+    <string name="text_nickname">昵称</string>
+    <string name="text_login_email">登录邮箱</string>
     <!--<string name="reminder_list_explain">这里的闹钟每天都会提醒你复习哦，长按可以删除某一个闹钟</string>-->
 </resources>
 

@@ -9,6 +9,10 @@ public class User {
     public String id;
     public String email;
     public String password;
+    public String username;
+
+    @SerializedName("avatar")
+    public String avatarUrl;
 
     @SerializedName("password_confirmation")
     public String passwordConfirmation;

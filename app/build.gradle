@@ -7,13 +7,19 @@ buildscript {
         classpath 'com.android.tools.build:gradle:1.0.0'
         // the latest version of the android-apt plugin
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4'
+        classpath 'me.tatarka:gradle-retrolambda:2.5.0'
     }
 }
 
 apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'me.tatarka.retrolambda'
 
 android {
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     compileSdkVersion 19
     buildToolsVersion "20.0.0"
 
@@ -45,9 +51,13 @@ dependencies {
         transitive = true
     }
     compile 'com.squareup.retrofit:retrofit:1.8.0'
-    compile 'com.mcxiaoke.volley:library:1.0.+'
-    compile 'com.squareup.okhttp:okhttp:2.2.0'
     compile project(':..:androidlibs')
+    //circleimageview
+    compile 'de.hdodenhof:circleimageview:1.2.2'
+    //RxAndroid
+    compile 'io.reactivex:rxandroid:0.24.0'
+    //Picasso
+    compile 'com.squareup.picasso:picasso:2.5.2'
 }
 
 apt {

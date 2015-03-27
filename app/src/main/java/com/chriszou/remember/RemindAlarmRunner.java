@@ -37,7 +37,7 @@ public class RemindAlarmRunner implements AlarmRunner {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                TweetModel model = new TweetModel();
+                TweetModel model = TweetModel.getInstance();
                 try {
                     List<Tweet> tweets = model.allTweets();
                     ContentMode mode = ContentMode.valueOf(reminderType);
