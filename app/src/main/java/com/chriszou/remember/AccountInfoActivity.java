@@ -1,5 +1,9 @@
 package com.chriszou.remember;
 
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -14,6 +18,7 @@ import com.squareup.picasso.Picasso;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.ViewById;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -23,6 +28,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 @EActivity(R.layout.account_info_activity)
 public class AccountInfoActivity extends RmbActivity {
+    private static final int SELECT_PICTURE = 1;
     @ViewById
     TextView emailView;
     @ViewById
@@ -48,7 +54,10 @@ public class AccountInfoActivity extends RmbActivity {
     private void updateViews() {
         emailView.setText(mUser.email);
         usernameEdit.setText(mUser.username);
-        Picasso.with(getActivity()).load(Links.userAvatar(mUser)).into(avatarView);
+        Picasso picasso = Picasso.with(getActivity());
+        picasso.setIndicatorsEnabled(true);
+        picasso.setLoggingEnabled(true);
+        picasso.load(Links.userAvatar(mUser)).into(avatarView);
     }
 
     private void changeUsername() {
@@ -58,10 +67,11 @@ public class AccountInfoActivity extends RmbActivity {
         }
     }
 
-    private void onUpdated(User user) {
-        UserModel.saveUser(user);
+    private void onUpdated(final User user) {
         mUser = user;
+        UserModel.saveUser(mUser);
         updateViews();
+        setResult(RESULT_OK);
     }
 
     public void onError(Throwable throwable) {
@@ -75,10 +85,35 @@ public class AccountInfoActivity extends RmbActivity {
     }
 
     private void changeAvatar() {
+        Intent pickIntent = new Intent();
+        pickIntent.setType("image/*");
+        pickIntent.setAction(Intent.ACTION_GET_CONTENT);
 
+        Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        String pickTitle = getString(R.string.select_pic_or_take_pic);
+        Intent chooserIntent = Intent.createChooser(pickIntent, pickTitle);
+        chooserIntent.putExtra ( Intent.EXTRA_INITIAL_INTENTS, new Intent[] { takePhotoIntent } );
+
+        startActivityForResult(chooserIntent, SELECT_PICTURE);
     }
 
+    @OnActivityResult(SELECT_PICTURE)
+    void onResult(int resultCode, Intent data) {
+        if (resultCode == RESULT_OK  && data != null && data.getData() != null) {
+            Uri _uri = data.getData();
 
+            //User had pick an image.
+            Cursor cursor = getContentResolver().query(_uri, new String[] { MediaStore.Images.ImageColumns.DATA }, null, null, null);
+            cursor.moveToFirst();
+
+            //Link to the image
+            final String imageFilePath = cursor.getString(0);
+            cursor.close();
+
+            UserModel.setUserAvater(imageFilePath).subscribe(this::onUpdated, this::onError);
+        }
+    }
 
     @Click
     void usernameLayout() {

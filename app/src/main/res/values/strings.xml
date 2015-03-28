@@ -29,6 +29,7 @@
     <string name="text_test">TestText</string>
     <string name="text_nickname">昵称</string>
     <string name="text_login_email">登录邮箱</string>
+    <string name="select_pic_or_take_pic">选择或拍摄一张照片</string>
     <!--<string name="reminder_list_explain">这里的闹钟每天都会提醒你复习哦，长按可以删除某一个闹钟</string>-->
 </resources>
 

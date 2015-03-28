@@ -4,11 +4,16 @@ import com.chriszou.androidlibs.Prefs;
 import com.chriszou.remember.util.RetrofitUtils;
 import com.google.gson.Gson;
 
+import java.io.File;
+
 import retrofit.http.Body;
+import retrofit.http.Multipart;
 import retrofit.http.POST;
 import retrofit.http.PUT;
+import retrofit.http.Part;
 import retrofit.http.Path;
 import retrofit.http.Query;
+import retrofit.mime.TypedFile;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -78,6 +83,11 @@ public class UserModel {
         return service.updateUser(currentUser().id, currentUser().authToken, user).observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io());
     }
 
+    public static Observable<User> setUserAvater(String imageFilePath) {
+        TypedFile avatar = new TypedFile("image/png", new File(imageFilePath));
+        return userService().updateUser(currentUser().id, currentUser().authToken, avatar).observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io());
+    }
+
     public static interface UserService {
         @PUT("/users/{user_id}")
         Observable<User> updateUser(@Path("user_id") String userId, @Query("auth_token") String authToken, @Body User user);
@@ -87,5 +97,9 @@ public class UserModel {
 
         @POST("/signup")
         Observable<User> register(@Body User user);
+
+        @Multipart
+        @PUT("/users/{user_id}")
+        Observable<User> updateUser(@Path("user_id") String userId, @Query("auth_token") String authToken, @Part("avatar") TypedFile photo);
     }
 }

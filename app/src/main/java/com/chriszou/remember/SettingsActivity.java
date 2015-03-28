@@ -17,6 +17,7 @@ import com.squareup.picasso.Picasso;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.ViewById;
 
 import java.io.IOException;
@@ -28,6 +29,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 @EActivity(R.layout.settings_layout)
 public class SettingsActivity extends RmbActivity{
+    private static final int REQ_CHANGE_USER_ACCOUNT = 0;
     @ViewById
     TextView usernameView;
     @ViewById
@@ -41,12 +43,15 @@ public class SettingsActivity extends RmbActivity{
     @AfterViews
     void initViews() {
         if (assureLoggedIn()) {
-            updateView();
+            updateViews();
         }
     }
 
-    private void updateView() {
-        Picasso.with(getActivity()).load(Links.userAvatar(mUser)).into(avatarView);
+    private void updateViews() {
+        Picasso picasso = Picasso.with(getActivity());
+        picasso.setIndicatorsEnabled(true);
+        picasso.setLoggingEnabled(true);
+        picasso.load(Links.userAvatar(mUser)).into(avatarView);
         usernameView.setText(mUser.username);
         setTweetCount();
     }
@@ -72,7 +77,7 @@ public class SettingsActivity extends RmbActivity{
 
     @Click
     void accountLayout() {
-        startActivity(new Intent(getActivity(),AccountInfoActivity_.class));
+        startActivityForResult(new Intent(getActivity(),AccountInfoActivity_.class), REQ_CHANGE_USER_ACCOUNT);
     }
 
     @Click
@@ -88,6 +93,14 @@ public class SettingsActivity extends RmbActivity{
         LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(new Intent(UserModel.BROADCAST_LOGOUT));
         ActivityNavigator.toLoginActivity(getActivity());
         finish();
+    }
+
+    @OnActivityResult(REQ_CHANGE_USER_ACCOUNT)
+    void onResult(int resultCode) {
+        if (resultCode == RESULT_OK) {
+            mUser = UserModel.currentUser();
+            updateViews();
+        }
     }
 
     public static Intent createIntent(Activity activity) {
