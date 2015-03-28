@@ -11,6 +11,7 @@ import android.widget.ListView;
 import com.chriszou.remember.model.Tweet;
 import com.chriszou.remember.model.UserModel;
 import com.chriszou.remember.util.ActivityNavigator;
+import com.chriszou.remember.util.AppUpgrader;
 import com.chriszou.remember.util.ReminderAlarmHelper;
 
 import org.androidannotations.annotations.AfterViews;
@@ -44,7 +45,7 @@ public class MainActivity extends TweetListActivity {
 
     @Background
     void checkUpgrade() {
-//        AppUpgrader.checkUpgrade(getActivity());
+        AppUpgrader.checkUpgrade(getActivity());
     }
 
     private void login() {
@@ -87,14 +88,7 @@ public class MainActivity extends TweetListActivity {
     private BroadcastReceiver mLogoutReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent != null && intent.getAction()!=null) {
-                String action = intent.getAction();
-                if (action.equals(UserModel.BROADCAST_LOGOUT)) {
-                    if (getActivity() != null) {
-                        getActivity().finish();
-                    }
-                }
-            }
+            if (intent != null && UserModel.BROADCAST_LOGOUT.equals(intent.getAction())) getActivity().finish();
         }
     };
 
