@@ -7,7 +7,6 @@ package com.chriszou.remember;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 
 import com.chriszou.androidlibs.AlarmHelper;
 import com.chriszou.androidlibs.AlarmRunner;
@@ -16,7 +15,6 @@ import com.chriszou.remember.model.Tweet;
 import com.chriszou.remember.model.TweetModel;
 import com.chriszou.remember.util.ReminderAlarmHelper;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -24,42 +22,28 @@ import java.util.List;
  *
  */
 public class RemindAlarmRunner implements AlarmRunner {
-
+    private Intent intent;
+    private Context mContext;
 	/* (non-Javadoc)
 	 * @see com.chriszou.androidlibs.AlarmRunner#run(android.content.Context, android.content.Intent)
 	 */
 	@Override
 	public void run(final Context context, Intent intent) {
-		final String reminderType = intent.getBundleExtra(AlarmHelper.EXTRA_EXTRA).getString(ReminderActivity.EXTRA_STRING_REMINDER_TYPE,
-				ContentMode.SHUFFLE.name());
-        final Handler handler = new Handler();
-
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                TweetModel model = TweetModel.getInstance();
-                try {
-                    List<Tweet> tweets = model.allTweets();
-                    ContentMode mode = ContentMode.valueOf(reminderType);
-                    tweets = mode.getTweets(tweets);
-                    if (tweets.size() > 0) {
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Intent activityIntent = ReminderActivity.createIntent(context, reminderType);
-                                activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                context.startActivity(activityIntent);
-                            }
-                        });
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        new Thread(runnable).start();
-
+        this.intent = intent;
+        mContext = context;
+        TweetModel.getInstance().allTweets().subscribe(this::showReminderTweets, e ->{});
 		ReminderAlarmHelper.setupAlarms(context);
 	}
+
+    private void showReminderTweets(final List<Tweet> tweets) {
+        final String reminderType = intent.getBundleExtra(AlarmHelper.EXTRA_EXTRA).getString(ReminderActivity.EXTRA_STRING_REMINDER_TYPE, ContentMode.SHUFFLE.name());
+        ContentMode mode = ContentMode.valueOf(reminderType);
+        List<Tweet> reminderTweets = mode.getTweets(tweets);
+        if (reminderTweets.size() > 0) {
+            Intent activityIntent = ReminderActivity.createIntent(mContext, reminderType);
+            activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            mContext.startActivity(activityIntent);
+        }
+    }
 
 }

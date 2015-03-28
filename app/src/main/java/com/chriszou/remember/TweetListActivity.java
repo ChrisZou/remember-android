@@ -5,9 +5,8 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.chriszou.androidlibs.Toaster;
-import com.chriszou.androidlibs.ViewBinderAdapter;
 import com.chriszou.androidlibs.ViewBinderAdapter.ViewBinder;
+import com.chriszou.remember.adapters.TweetAdapter;
 import com.chriszou.remember.model.Tweet;
 import com.chriszou.remember.model.TweetModel;
 
@@ -15,7 +14,6 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -24,7 +22,7 @@ import java.util.List;
 @EActivity
 public abstract class TweetListActivity extends RmbActivity implements ViewBinder<Tweet> {
 
-    private ViewBinderAdapter<Tweet> mAdapter;
+    private TweetAdapter mAdapter;
 
     @Background
     public void loadTweets() {
@@ -33,15 +31,9 @@ public abstract class TweetListActivity extends RmbActivity implements ViewBinde
 		 */
         List<Tweet> tweets = TweetModel.getInstance().getCachedTweets();
         updateList(tweets);
-        try {
-            tweets = TweetModel.getInstance().allTweets();
-            updateList(tweets);
-        } catch (IOException e) {
-            Toaster.s(getActivity(), "Network connection failed");
-            e.printStackTrace();
-        }
+        TweetModel.getInstance().allTweets().subscribe(tweetList -> updateList(tweetList), this::onError);
     }
-    protected ViewBinderAdapter<Tweet> getAdapter() {
+    protected TweetAdapter getAdapter() {
         return mAdapter;
     }
     protected abstract ListView getListView();
@@ -49,7 +41,7 @@ public abstract class TweetListActivity extends RmbActivity implements ViewBinde
     @UiThread
     void updateList(List<Tweet> tweets) {
         tweets = preprocessTweets(tweets);
-        mAdapter = new ViewBinderAdapter<Tweet>(getActivity(), tweets, this);
+        mAdapter = new TweetAdapter(getActivity(), tweets);//new ViewBinderAdapter<>(getActivity(), tweets, this);
         getListView().setAdapter(mAdapter);
     }
 

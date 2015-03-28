@@ -6,10 +6,9 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.widget.TextView;
 
 import com.chriszou.androidlibs.Toaster;
-import com.chriszou.androidlibs.UIHandler;
-import com.chriszou.remember.model.UserModel;
 import com.chriszou.remember.model.TweetModel;
 import com.chriszou.remember.model.User;
+import com.chriszou.remember.model.UserModel;
 import com.chriszou.remember.util.ActivityNavigator;
 import com.chriszou.remember.util.Links;
 import com.squareup.picasso.Picasso;
@@ -19,8 +18,6 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.ViewById;
-
-import java.io.IOException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -57,11 +54,7 @@ public class SettingsActivity extends RmbActivity{
     }
 
     void setTweetCount() {
-        new Thread(() -> {
-            try { final int count = TweetModel.getInstance().allTweets().size();
-                UIHandler.post(() -> noteCountView.setText("您共有 "+count+" 条笔记"));
-            } catch (IOException e) {e.printStackTrace();}
-        }).start();
+        TweetModel.getInstance().allTweets().subscribe(tweets->noteCountView.setText("您共有 "+tweets.size()+" 条笔记"), e->{});
     }
 
     private boolean assureLoggedIn() {

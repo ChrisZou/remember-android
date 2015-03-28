@@ -5,19 +5,20 @@
  */
 package com.chriszou.remember.model;
 
-import com.chriszou.androidlibs.HttpUtils;
-import com.chriszou.androidlibs.Prefs;
-import com.chriszou.remember.util.Links;
+import com.chriszou.remember.util.RetrofitUtils;
 
-import org.apache.http.HttpResponse;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
+import retrofit.http.Body;
+import retrofit.http.DELETE;
+import retrofit.http.GET;
+import retrofit.http.POST;
+import retrofit.http.Path;
+import retrofit.http.Query;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Class for doing Tweets CRUD.
@@ -30,82 +31,44 @@ public class TweetModel {
     private static final String PREF_KEY_STRING_TWEET = "pref_key_string_tweet";
 
     private static TweetModel sTweetModel = new TweetModel();
-
-    private TweetModel() {}
+    private TweetService mTweetService;
+    private TweetModel() {
+        mTweetService = RetrofitUtils.restAdapter().create(TweetService.class);
+    }
 
     public static TweetModel getInstance() {
         return sTweetModel;
     }
 
-    public List<Tweet> allTweets() throws IOException {
-        if (UserModel.currentUser() == null) {
-            return new ArrayList<Tweet>();
-        }
-
-        if (isUpdated()) {
-            String url = Links.tweetsUrl(UserModel.currentUser());
-            String tweetsJson = HttpUtils.getContent(url);
-            return jsonArrayToTweetList(tweetsJson);
-        } else {
-            return getCachedTweets();
-        }
-    }
-
-    private List<Tweet> jsonArrayToTweetList(String tweetsJson) {
-        List<Tweet> results = new ArrayList<Tweet>();
-        try {
-            JSONArray array = new JSONObject(tweetsJson).optJSONArray("data");
-            for (int i = 0; i < array.length(); i++) {
-                JSONObject object = array.optJSONObject(i);
-                Tweet t = Tweet.fromJson(object);
-                results.add(t);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return results;
-    }
-
-    /**
-     * If data on the server has been updated, otherwise just use the cache rather than doing another request
-     *
-     * @return
-     */
-    private boolean isUpdated() throws IOException {
-        String etag = HttpUtils.getEtag(Links.tweetsUrl(null));
-        String oldEtag = Prefs.getString(PREF_STRING_ETAG, "");
-        if (oldEtag.equals(etag)) {
-            return false;
-        } else {
-            Prefs.putString(PREF_STRING_ETAG, etag);
-            return true;
-        }
+    public Observable<List<Tweet>> allTweets() {
+        return mTweetService.getAll(currentUserToken()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 
     public List<Tweet> getCachedTweets() {
-        String tweetsJson = Prefs.getString(PREF_KEY_STRING_TWEET, null);
-        return tweetsJson == null ? Collections.EMPTY_LIST : jsonArrayToTweetList(tweetsJson);
+        return new ArrayList<Tweet>();
     }
 
-    public boolean addTweet(final Tweet tweet) throws IOException {
-        HttpResponse response = HttpUtils.postJson(Links.tweetsUrl(UserModel.currentUser()), tweet.toJson());
-        int statusCode = response.getStatusLine().getStatusCode();
-        if (statusCode == 200 || statusCode == 201) {
-            return true;
-        }
-        return false;
+    public Observable<Tweet> addTweet(final Tweet tweet) {
+        return mTweetService.createTweet(currentUserToken(), tweet).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 
-    /**
-     * @param content
-     */
-    public void saveCache(String content) {
-        Prefs.putString(PREF_KEY_STRING_TWEET, content);
+    private String currentUserToken() {
+        return UserModel.currentUser().authToken;
     }
 
-    public boolean createTweet(String content) throws IOException {
-        Tweet tweet = new Tweet(content);
-        return addTweet(tweet);
+    public Observable<String> remove(Tweet item) {
+        return RetrofitUtils.restAdapter().create(TweetService.class).remove(currentUserToken(), item.getId())
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public interface TweetService{
+        @DELETE("/tweets/{id}")
+        Observable<String> remove(@Query("auth_token") String authToken, @Path("id") int id);
+
+        @GET("/tweets")
+        Observable<List<Tweet>> getAll(@Query("auth_token") String authToken);
+
+        @POST("/tweets")
+        Observable<Tweet> createTweet(@Query("auth_token") String authToken, @Body Tweet tweet);
     }
 }

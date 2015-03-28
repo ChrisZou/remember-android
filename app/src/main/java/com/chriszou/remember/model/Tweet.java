@@ -12,6 +12,7 @@ import java.util.List;
  * Created by zouyong on 10/24/14.
  */
 public class Tweet implements Serializable{
+    private int id;
     private String content = "";
     private String createdTime = "";
     private String modifiedTime = "";
@@ -23,6 +24,13 @@ public class Tweet implements Serializable{
         content = text;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
     /**
      *
      */

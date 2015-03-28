@@ -14,7 +14,7 @@ public class GsonUtils {
         return sGson.fromJson(object.toString(), clazz);
     }
 
-    public static String toJson(User user) {
+    public static String toJson(Object user) {
         return sGson.toJson(user);
     }
 }
