@@ -1,12 +1,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              style="@style/activity_bg" >
-
+              style="@style/activity_bg"
+                android:padding="0dp">
+    <com.yalantis.phoenix.PullToRefreshView
+        android:id="@+id/pull_to_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <ListView
         android:id="@+id/main_listview"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:divider="@android:color/transparent"
+        android:layout_height="fill_parent"
+        android:background="@color/activity_bg"
+        android:divider="@color/activity_bg"
         android:dividerHeight="@dimen/padding_default"
+        android:paddingTop="@dimen/padding_default"
+        android:paddingLeft="@dimen/padding_default"
+        android:paddingRight="@dimen/padding_default"
         />
-
+    </com.yalantis.phoenix.PullToRefreshView>
 </LinearLayout>

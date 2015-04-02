@@ -14,6 +14,7 @@ import com.chriszou.remember.util.ActivityNavigator;
 import com.chriszou.remember.util.AppUpgrader;
 import com.chriszou.remember.util.ReminderAlarmHelper;
 import com.chriszou.remember.util.UMengUtils;
+import com.yalantis.phoenix.PullToRefreshView;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -23,11 +24,15 @@ import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
+import java.util.List;
+
 @EActivity(R.layout.fragment_main)
 @OptionsMenu(R.menu.main)
 public class MainActivity extends TweetListActivity {
     private static final int REQUEST_NEW_TWEET = 1;
     private LocalBroadcastManager mLocalBroadcastManager;
+    @ViewById
+    PullToRefreshView pullToRefresh;
 
     @AfterViews
     void checkLogin() {
@@ -37,11 +42,10 @@ public class MainActivity extends TweetListActivity {
         if (!UserModel.loggedIn()) { login(); finish(); return; }
 
         getListView().setOnItemClickListener((parent, view, position, id) -> UMengUtils.logEvent(getActivity(), UMengUtils.EVENT_NOTE_ITEM_CLICKED));
-
+        pullToRefresh.setOnRefreshListener(this::loadTweets);
         checkUpgrade();
         ReminderAlarmHelper.setupAlarms(this);
         loadTweets();
-
     }
 
     @Override
@@ -75,6 +79,12 @@ public class MainActivity extends TweetListActivity {
     void actionNew() {
         UMengUtils.logEvent(getActivity(), UMengUtils.EVENT_ADD_CLICKED);
         startActivityForResult(NewTweetActivity.createIntent(getActivity()), REQUEST_NEW_TWEET);
+    }
+
+    @Override
+    protected void onTweetsLoaded(List<Tweet> tweets) {
+        super.onTweetsLoaded(tweets);
+        pullToRefresh.setRefreshing(false);
     }
 
     @ViewById(R.id.main_listview)

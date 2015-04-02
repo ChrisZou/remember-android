@@ -28,8 +28,8 @@ public abstract class TweetListActivity extends RmbActivity implements ViewBinde
         /*
 		 * First load cache, then load from network.
 		 */
-        List<Tweet> tweets = TweetModel.getInstance().getCachedTweets();
-        updateList(tweets);
+        //List<Tweet> tweets = TweetModel.getInstance().getCachedTweets();
+        //updateList(tweets);
         TweetModel.getInstance().allTweets().subscribe(this::onTweetsLoaded, this::onError);
     }
     protected TweetAdapter getAdapter() {
@@ -45,7 +45,7 @@ public abstract class TweetListActivity extends RmbActivity implements ViewBinde
         getListView().setAdapter(mAdapter);
     }
 
-    private void onTweetsLoaded(List<Tweet> tweets) {
+    protected void onTweetsLoaded(List<Tweet> tweets) {
         if (tweets==null) return;
 
         logTweetsLoaded(tweets);
