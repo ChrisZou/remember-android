@@ -13,6 +13,7 @@ import com.chriszou.remember.model.UserModel;
 import com.chriszou.remember.util.ActivityNavigator;
 import com.chriszou.remember.util.AppUpgrader;
 import com.chriszou.remember.util.ReminderAlarmHelper;
+import com.chriszou.remember.util.UMengUtils;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -33,14 +34,20 @@ public class MainActivity extends TweetListActivity {
         setActionBarHomeUp(false);
         registerLocalBroadcast();
 
-        if (!UserModel.loggedIn()) {
-            login();
-        } else {
-            checkUpgrade();
-            ReminderAlarmHelper.setupAlarms(this);
-            loadTweets();
-        }
+        if (!UserModel.loggedIn()) { login(); finish(); return; }
 
+        getListView().setOnItemClickListener((parent, view, position, id) -> UMengUtils.logEvent(getActivity(), UMengUtils.EVENT_NOTE_ITEM_CLICKED));
+
+        checkUpgrade();
+        ReminderAlarmHelper.setupAlarms(this);
+        loadTweets();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        UMengUtils.logAppStartEvent(getActivity());
     }
 
     @Background
@@ -50,7 +57,6 @@ public class MainActivity extends TweetListActivity {
 
     private void login() {
         ActivityNavigator.toLoginActivity(getActivity());
-        finish();
     }
 
     private void registerLocalBroadcast() {
@@ -61,11 +67,13 @@ public class MainActivity extends TweetListActivity {
 
     @OptionsItem
     void actionSettings() {
+        UMengUtils.logEvent(getActivity(), UMengUtils.EVENT_SETTINGS_CLICKED);
         startActivity(SettingsActivity.createIntent(getActivity()));
     }
 
     @OptionsItem
     void actionNew() {
+        UMengUtils.logEvent(getActivity(), UMengUtils.EVENT_ADD_CLICKED);
         startActivityForResult(NewTweetActivity.createIntent(getActivity()), REQUEST_NEW_TWEET);
     }
 

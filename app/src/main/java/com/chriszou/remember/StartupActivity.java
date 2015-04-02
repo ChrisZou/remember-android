@@ -5,6 +5,7 @@ import android.view.Window;
 
 import com.chriszou.remember.model.UserModel;
 import com.chriszou.remember.util.ActivityNavigator;
+import com.umeng.analytics.MobclickAgent;
 
 /**
  * Created by Chris on 1/9/15.
@@ -14,11 +15,11 @@ public class StartupActivity extends RmbActivity {
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
-        if (UserModel.loggedIn()) {
-            ActivityNavigator.toMainActivity(getActivity());
-        } else {
-            ActivityNavigator.toLoginActivity(getActivity());
-        }
+
+        if (UserModel.loggedIn()) ActivityNavigator.toMainActivity(getActivity());
+        else ActivityNavigator.toLoginActivity(getActivity());
+
+        MobclickAgent.updateOnlineConfig(getActivity());
 
         finish();
     }

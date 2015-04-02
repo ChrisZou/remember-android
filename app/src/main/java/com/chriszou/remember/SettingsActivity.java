@@ -11,6 +11,7 @@ import com.chriszou.remember.model.User;
 import com.chriszou.remember.model.UserModel;
 import com.chriszou.remember.util.ActivityNavigator;
 import com.chriszou.remember.util.Links;
+import com.chriszou.remember.util.UMengUtils;
 import com.squareup.picasso.Picasso;
 
 import org.androidannotations.annotations.AfterViews;
@@ -26,7 +27,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 @EActivity(R.layout.settings_layout)
 public class SettingsActivity extends RmbActivity{
-    private static final int REQ_CHANGE_USER_ACCOUNT = 0;
+    private static final int REQ_VIEW_USER_INFO = 0;
+
     @ViewById
     TextView usernameView;
     @ViewById
@@ -70,16 +72,19 @@ public class SettingsActivity extends RmbActivity{
 
     @Click
     void accountLayout() {
-        startActivityForResult(new Intent(getActivity(),AccountInfoActivity_.class), REQ_CHANGE_USER_ACCOUNT);
+        UMengUtils.logEvent(getActivity(), UMengUtils.EVENT_USER_INFO_CLICKED);
+        startActivityForResult(new Intent(getActivity(),AccountInfoActivity_.class), REQ_VIEW_USER_INFO);
     }
 
     @Click
     void settingsReminders() {
+        UMengUtils.logEvent(getActivity(), UMengUtils.EVENT_REMINDERS_CLICKED);
         startActivity(ReminderListActivity.createIntent(getActivity()));
     }
 
     @Click
     void logout() {
+        UMengUtils.logEvent(getActivity(), UMengUtils.EVENT_LOGOUT_CLICKED);
         UserModel.logout();
         Toaster.s(this, "已退出登录");
 
@@ -88,7 +93,7 @@ public class SettingsActivity extends RmbActivity{
         finish();
     }
 
-    @OnActivityResult(REQ_CHANGE_USER_ACCOUNT)
+    @OnActivityResult(REQ_VIEW_USER_INFO)
     void onResult(int resultCode) {
         if (resultCode == RESULT_OK) {
             mUser = UserModel.currentUser();

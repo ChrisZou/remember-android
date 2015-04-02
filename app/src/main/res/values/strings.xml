@@ -33,6 +33,7 @@
     <string name="confirm_delete">确定删除</string>
     <string name="text_cancel">取消</string>
     <string name="text_ok">确定</string>
+    <string name="distribution_channel">woaifuxi.com</string>
     <!--<string name="reminder_list_explain">这里的闹钟每天都会提醒你复习哦，长按可以删除某一个闹钟</string>-->
 </resources>
 

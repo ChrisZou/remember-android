@@ -9,11 +9,11 @@ import com.chriszou.androidlibs.ViewBinderAdapter.ViewBinder;
 import com.chriszou.remember.adapters.TweetAdapter;
 import com.chriszou.remember.model.Tweet;
 import com.chriszou.remember.model.TweetModel;
+import com.chriszou.remember.util.UMengUtils;
 
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.UiThread;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -24,25 +24,36 @@ public abstract class TweetListActivity extends RmbActivity implements ViewBinde
 
     private TweetAdapter mAdapter;
 
-    @Background
     public void loadTweets() {
         /*
 		 * First load cache, then load from network.
 		 */
         List<Tweet> tweets = TweetModel.getInstance().getCachedTweets();
         updateList(tweets);
-        TweetModel.getInstance().allTweets().subscribe(tweetList -> updateList(tweetList), this::onError);
+        TweetModel.getInstance().allTweets().subscribe(this::onTweetsLoaded, this::onError);
     }
     protected TweetAdapter getAdapter() {
         return mAdapter;
     }
     protected abstract ListView getListView();
 
-    @UiThread
     void updateList(List<Tweet> tweets) {
         tweets = preprocessTweets(tweets);
         mAdapter = new TweetAdapter(getActivity(), tweets);//new ViewBinderAdapter<>(getActivity(), tweets, this);
         getListView().setAdapter(mAdapter);
+    }
+
+    private void onTweetsLoaded(List<Tweet> tweets) {
+        if (tweets==null) return;
+        logTweetsLoaded(tweets);
+        updateList(tweets);
+    }
+
+    private void logTweetsLoaded(List<Tweet> tweets) {
+        HashMap data = new HashMap();
+        data.put("activity", getClass().getSimpleName());
+        data.put("notes_count", tweets.size()+"");
+        UMengUtils.logEvent(getActivity(), UMengUtils.EVENT_NOTES_LOADED, data);
     }
 
     /**

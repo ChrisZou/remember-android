@@ -4,20 +4,18 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.chriszou.androidlibs.DeviceUtils;
-import com.chriszou.androidlibs.L;
 import com.chriszou.androidlibs.TimeHelper;
-import com.chriszou.androidlibs.Toaster;
 import com.chriszou.androidlibs.ViewBinderAdapter;
 import com.chriszou.androidlibs.ViewBinderAdapter.ViewBinder;
 import com.chriszou.remember.TimePickerFragmentDialog.OnTimePickedListener;
 import com.chriszou.remember.model.ContentMode;
 import com.chriszou.remember.model.Reminder;
 import com.chriszou.remember.util.ReminderAlarmHelper;
+import com.chriszou.remember.util.UMengUtils;
 import com.fortysevendeg.swipelistview.SwipeListView;
 
 import org.androidannotations.annotations.AfterViews;
@@ -25,8 +23,6 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
-
-import java.util.List;
 
 /**
  * Created by Chris on 1/8/15.
@@ -46,15 +42,18 @@ public class ReminderListActivity extends RmbActivity implements OnTimePickedLis
     @AfterViews
     void initViews() {
         mListView.setOffsetLeft(DeviceUtils.screenWidth(getActivity()) - DeviceUtils.dpToPixel(getActivity(), 180));
-        List<Reminder> reminders = Reminder.all();
-        mAdapter = new ViewBinderAdapter<Reminder>(getActivity(), reminders, mReminderViewBinder);
+        mAdapter = new ViewBinderAdapter<>(getActivity(), Reminder.all(), mReminderViewBinder);
         mListView.setAdapter(mAdapter);
+        mListView.setOnItemClickListener((parent, view, position, id) -> {
+            UMengUtils.logEvent(getActivity(), UMengUtils.EVENT_REMINDER_ITEM_CLICKED);
+        });
     }
 
     @OptionsItem
     void actionNew() {
         mEditingReminder = null;
         showTimePickerDialog(System.currentTimeMillis());
+        UMengUtils.logEvent(getActivity(), UMengUtils.EVENT_ADD_REMINDER_CLICKED);
     }
 
     private void editReminder(Reminder item) {
@@ -80,39 +79,35 @@ public class ReminderListActivity extends RmbActivity implements OnTimePickedLis
             TextView textView = (TextView) view.findViewById(R.id.reminder_item_time);
             textView.setText(item.getReminderTime());
 
-            view.findViewById(R.id.reminder_item_delete).setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ReminderAlarmHelper.cancelAlarm(getActivity(), item);
-                    mAdapter.remove(item);
-                    item.delete();
-                }
+            view.findViewById(R.id.reminder_item_delete).setOnClickListener(v -> {
+                ReminderAlarmHelper.cancelAlarm(getActivity(), item);
+                mAdapter.remove(item);
+                item.delete();
+                UMengUtils.logEvent(getActivity(), UMengUtils.EVENT_REMOVED_REMINDER);
             });
 
-            view.findViewById(R.id.reminder_item_edit).setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toaster.s(getActivity(), "edit reminder");
-                    mListView.closeOpenedItems();
-                    editReminder(item);
-                }
+            view.findViewById(R.id.reminder_item_edit).setOnClickListener( v-> {
+                mListView.closeOpenedItems();
+                editReminder(item);
+                UMengUtils.logEvent(getActivity(), UMengUtils.EVENT_MODIFY_REMINDER_CLICKED);
             });
         }
     };
 
     @Override
     public void onTimePicked(int hourOfDay, int minute, DialogFragment dialogFragment) {
-        L.l("on time picked");
         long time = TimeHelper.getNextHourAndMinite(hourOfDay, minute);
         Reminder reminder = mEditingReminder;
         if (mEditingReminder == null) {
             reminder = new Reminder(time, ContentMode.SHUFFLE);
             reminder.save();
             mAdapter.add(reminder);
+            UMengUtils.logEvent(getActivity(), UMengUtils.EVENT_ADDED_REMINDER);
         } else {
             reminder.time = time;
             reminder.save();
             mAdapter.notifyDataSetChanged();
+            UMengUtils.logEvent(getActivity(), UMengUtils.EVENT_MODIFIED_REMINDER);
         }
         ReminderAlarmHelper.setupAlarm(getActivity(), reminder);
     }
