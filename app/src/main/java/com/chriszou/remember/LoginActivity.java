@@ -12,6 +12,7 @@ import com.chriszou.androidlibs.ViewUtils;
 import com.chriszou.remember.model.User;
 import com.chriszou.remember.model.UserModel;
 import com.chriszou.remember.util.ActivityNavigator;
+import com.chriszou.remember.util.UMengUtils;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
@@ -47,6 +48,12 @@ public class LoginActivity extends RmbActivity {
         mEmailEdit.setText(previousEmail);
 
         updateButtonState();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        UMengUtils.logAppStartEvent(getActivity());
     }
 
     @AfterTextChange({R.id.login_email, R.id.login_password})
