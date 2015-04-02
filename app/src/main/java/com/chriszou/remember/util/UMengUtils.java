@@ -47,6 +47,14 @@ public class UMengUtils {
         }
     }
 
+    public static void logEventValue(Context context, String eventId, HashMap data, int value) {
+        try {
+            MobclickAgent.onEventValue(context, eventId, data, value);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void logAppStartEvent(Activity activity) {
         HashMap data = new HashMap();
         try {

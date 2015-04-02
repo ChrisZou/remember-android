@@ -38,6 +38,8 @@ public abstract class TweetListActivity extends RmbActivity implements ViewBinde
     protected abstract ListView getListView();
 
     void updateList(List<Tweet> tweets) {
+        if (tweets==null) return;
+
         tweets = preprocessTweets(tweets);
         mAdapter = new TweetAdapter(getActivity(), tweets);//new ViewBinderAdapter<>(getActivity(), tweets, this);
         getListView().setAdapter(mAdapter);
@@ -45,15 +47,17 @@ public abstract class TweetListActivity extends RmbActivity implements ViewBinde
 
     private void onTweetsLoaded(List<Tweet> tweets) {
         if (tweets==null) return;
+
         logTweetsLoaded(tweets);
         updateList(tweets);
     }
 
     private void logTweetsLoaded(List<Tweet> tweets) {
+        if (tweets==null) return;
+
         HashMap data = new HashMap();
         data.put("activity", getClass().getSimpleName());
-        data.put("notes_count", tweets.size()+"");
-        UMengUtils.logEvent(getActivity(), UMengUtils.EVENT_NOTES_LOADED, data);
+        UMengUtils.logEventValue(getActivity(), UMengUtils.EVENT_NOTES_LOADED, data, tweets.size());
     }
 
     /**
